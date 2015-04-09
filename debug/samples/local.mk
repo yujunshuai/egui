@@ -8,7 +8,12 @@ noinst_PROGRAMS += %D%/multi_windows\
 				   %D%/editerbasic\
 				   %D%/timer\
 				   %D%/text_clock\
+<<<<<<< HEAD
 				   %D%/tab
+=======
+				   %D%/tab\
+				   %D%/game
+>>>>>>> EGUI1.0 including game
 
 %C%_multi_windows_SOURCES = %D%/multi_windows.c
 %C%_shutdown_SOURCES = %D%/shutdown.c
@@ -19,6 +24,11 @@ noinst_PROGRAMS += %D%/multi_windows\
 %C%_timer_SOURCES = %D%/timer.c
 %C%_text_clock_SOURCES = %D%/text_clock.c
 %C%_tab_SOURCES = %D%/tab.c
+<<<<<<< HEAD
+=======
+%C%_game_SOURCES = %D%/game.c
+
+>>>>>>> EGUI1.0 including game
 
 %C%_multi_windows_LDADD = $(debug_samples_LDADD_TEMP)
 %C%_shutdown_LDADD = $(debug_samples_LDADD_TEMP)
@@ -29,6 +39,10 @@ noinst_PROGRAMS += %D%/multi_windows\
 %C%_timer_LDADD = $(debug_samples_LDADD_TEMP)
 %C%_text_clock_LDADD = $(debug_samples_LDADD_TEMP)
 %C%_tab_LDADD = $(debug_samples_LDADD_TEMP)
+<<<<<<< HEAD
+=======
+%C%_game_LDADD = $(debug_samples_LDADD_TEMP)
+>>>>>>> EGUI1.0 including game
 
 include $(top_srcdir)/debug/samples/calculator/local.mk
 include $(top_srcdir)/debug/samples/file_browser/local.mk
