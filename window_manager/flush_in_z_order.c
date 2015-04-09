@@ -44,6 +44,17 @@ static void paint_desktop(struct rectangle* area)
 	if(NULL == global_wm.desktop_app_ptr)
 	{
 		screen_set_area(&global_screen, &global_wm.work_area, &global_wm.backcolor, result.x, result.y, result.width, result.height);
+		screen_flush(0,0,global_screen.width,global_screen.height);
+
+		//struct graphics_device* gd_ptr;
+		//gd_ptr =global_wm.gd_handler;
+		//gd_ptr->screen.memory_addr = global_screen.buffer_addr;
+		engine_draw_arrow(gd,160,160,30,1);
+		
+		//engine_show_text(global_wm.gd_handler,global_screen.width/2-100,global_screen.height/2-45,"WELCOME!",8);
+		//engine_draw_arrow(global_wm.gd_handler,160,160,30,1);
+		screen_flush(0,0,global_screen.width,global_screen.height);
+
 	}
 	else
 	{

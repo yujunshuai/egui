@@ -102,7 +102,7 @@ struct window_manager
 };
 
 extern struct window_manager global_wm;
-
+extern si_t gd;
 /**
  * 初始化窗口管理器
  **/

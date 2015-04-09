@@ -405,6 +405,17 @@ static si_t interface_init()
 	}
 	gd_ptr = (struct graphics_device*)gd;
     engine_show_text(gd,global_screen.width/2-100,global_screen.height/2-45,"WELCOME!",8);
+
+ 	struct point p[4];
+    p[0].x=global_screen.width/2,p[0].y=0;
+	p[1].x=0,p[1].y=global_screen.height/2;
+	p[2].x=global_screen.width/2,p[2].y=global_screen.height;
+	p[3].x=global_screen.width,p[3].y=global_screen.height/2;
+    engine_draw_polygon(gd,p,4) ;
+    //engine_fill_circle(gd,global_screen.width/2,global_screen.height/2,30);
+    engine_fill_arrow(gd,60,60,30,2);
+    engine_draw_arrow(gd,160,160,30,1);
+
     screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
     return 0;
 }
