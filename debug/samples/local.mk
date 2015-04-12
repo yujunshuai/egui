@@ -12,8 +12,13 @@ noinst_PROGRAMS += %D%/multi_windows\
 				   %D%/tab
 =======
 				   %D%/tab\
+<<<<<<< HEAD
 				   %D%/game
 >>>>>>> EGUI1.0 including game
+=======
+				   %D%/game\
+				   %D%/desktop
+>>>>>>> 1st time for trying desktop
 
 %C%_multi_windows_SOURCES = %D%/multi_windows.c
 %C%_shutdown_SOURCES = %D%/shutdown.c
@@ -27,6 +32,7 @@ noinst_PROGRAMS += %D%/multi_windows\
 <<<<<<< HEAD
 =======
 %C%_game_SOURCES = %D%/game.c
+%C%_desktop_SOURCES =%D%/desktop.c
 
 >>>>>>> EGUI1.0 including game
 
@@ -42,7 +48,11 @@ noinst_PROGRAMS += %D%/multi_windows\
 <<<<<<< HEAD
 =======
 %C%_game_LDADD = $(debug_samples_LDADD_TEMP)
+<<<<<<< HEAD
 >>>>>>> EGUI1.0 including game
+=======
+%C%_desktop_LDADD = $(debug_samples_LDADD_TEMP)
+>>>>>>> 1st time for trying desktop
 
 include $(top_srcdir)/debug/samples/calculator/local.mk
 include $(top_srcdir)/debug/samples/file_browser/local.mk
