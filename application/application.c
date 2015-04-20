@@ -90,7 +90,7 @@ static si_t application_load_config()
 	/**
 	 * TODO load config from file
 	 **/
-	global_application.icon_root_path = get_config_path("/home/wangfei/egui/resource");
+	global_application.icon_root_path = get_config_path("");
 	global_application.server_path = "/tmp/server";
 	return 0;
 }

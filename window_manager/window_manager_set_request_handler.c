@@ -99,18 +99,19 @@ static si_t cancel_application_handler(addr_t app_ptr)
 	int n = 0, i = 0;
 
 	/** 在桌面注销窗口 **/
+	
     n = vector_size(&(app_info_ptr->window_info_vector));
-    for(i = 0; i < n; ++ i)
+   /* for(i = 0; i < n; ++ i)
     {
         struct object* tree = (struct object*)vector_at(&(app_info_ptr->window_info_vector), i);
-
+*/
 		/** 在桌面注销窗口 **/
-		if(NULL != global_wm.desktop_app_ptr)
+/*		if(NULL != global_wm.desktop_app_ptr)
 		{
 			send_window_cancel_message(&global_wm.desktop_app_ptr->uds, NULL, (si_t)(tree)->parent);
 		}
     }
-
+*/
 	/** 清理应用程序信息 **/
 	application_info_exit(app_info_ptr);
 
@@ -131,10 +132,10 @@ static si_t cancel_application_handler(addr_t app_ptr)
 		if(all_app_traversal_decrement(&iter, _do_update_last_window, NULL))
 		{
 			send_window_activate_message(&global_wm.active_app_info_ptr->uds, NULL, (si_t)global_wm.active_win_info_ptr);
-			if(NULL != global_wm.desktop_app_ptr)
+			/*if(NULL != global_wm.desktop_app_ptr)
 			{
 				send_window_activate_message(&global_wm.desktop_app_ptr->uds, NULL, (si_t)iter.top_win_info_ptr);
-			}
+			}*/
 		}
 	}
 
@@ -414,11 +415,10 @@ static si_t register_window_handler(addr_t app_ptr, si_t parent_descripter, char
 
 		/* 将窗口的信息添加到向量 */
 		vector_push_back(&(app_info_ptr->window_info_vector), &root, sizeof(struct object));
-		if(NULL != global_wm.desktop_app_ptr)
+/*		if(NULL != global_wm.desktop_app_ptr)
 		{
 			send_window_register_message(&global_wm.desktop_app_ptr->uds, NULL, (si_t)win_info_ptr);
-		}
-
+		}*/
 		win_info_ptr->parent = vector_back(&(app_info_ptr->window_info_vector));
 	}
 	/**
@@ -500,11 +500,12 @@ static si_t cancel_window_handler(addr_t app_ptr, si_t window_descripter)
 		return 0;
 
 	/* 如果是顶层窗口则发送消息给桌面 */
+	/*
 	if(NULL != global_wm.desktop_app_ptr && (si_t)window_descripter == (si_t)iter.top_win_info_ptr)
 	{
 		send_window_cancel_message(&global_wm.desktop_app_ptr->uds, NULL, window_descripter);
 	}
-
+*/
 	/* 更新活动用户应用程序和活动窗口 */
 	if((si_t)global_wm.active_win_info_ptr == window_descripter || global_wm.active_app_info_ptr == app_info_ptr)
 	{
@@ -518,10 +519,10 @@ static si_t cancel_window_handler(addr_t app_ptr, si_t window_descripter)
 			 * send activate msg
 			 **/
 			send_window_activate_message(&(global_wm.active_app_info_ptr->uds), NULL, (si_t)global_wm.active_win_info_ptr);
-			if(NULL != global_wm.desktop_app_ptr)
+		/*	if(NULL != global_wm.desktop_app_ptr)
 			{
 				send_window_activate_message(&global_wm.desktop_app_ptr->uds, NULL, (si_t)iter.top_win_info_ptr);
-			}
+			}*/
 		}
 	}
 

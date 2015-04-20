@@ -347,7 +347,7 @@ static si_t graph_init(char* framebuffer_path, si_t top_margin, si_t down_margin
 	struct graphics_device* gd_ptr = NULL;
 
 	/* 初始化屏幕 */
-	screen_init(framebuffer_path);
+	//screen_init(framebuffer_path);
 	/* 设置颜色的限制 */
 	screen_color_limit();
 

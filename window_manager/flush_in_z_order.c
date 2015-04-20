@@ -58,7 +58,9 @@ static void paint_desktop(struct rectangle* area)
 	}
 	else
 	{
-		//screen_set_area(&global_screen, &global_wm.work_area, &global_wm.backcolor, result.x, result.y, result.width, result.height);
+	    screen_set_area(&global_screen, &global_wm.work_area, &global_wm.backcolor, result.x, result.y, result.width, result.height);
+		
+		screen_flush(0,0,global_screen.width,global_screen.height);
 		flush_area_to_screen(&global_wm.desktop_app_ptr->screen, &result);
 	}
 }

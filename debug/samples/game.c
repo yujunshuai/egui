@@ -166,6 +166,40 @@ col[1].a=0;
 
     /* 添加顶层窗口 */
     application_add_window(NULL, w);
+
+
+				struct window * ww;
+		        /* 申请窗口 */
+		        ww = window_init("You win!");
+		        /* 申请失败 */
+		        if(ww == NULL)
+		        {
+		            application_exit();
+		            return -1;
+		        }
+				window_set_bounds(ww, 350, 250, 300, 100);
+				window_set_color(ww, NULL, &col[0]);
+
+		        /* 添加顶层窗口 */
+		        application_add_window(w, ww);
+
+
+
+				struct window * www;
+		        /* 申请窗口 */
+		        www = window_init("You win!");
+		        /* 申请失败 */
+		        if(ww == NULL)
+		        {
+		            application_exit();
+		            return -1;
+		        }
+				window_set_bounds(www, 500, 500, 300, 100);
+				window_set_color(www, NULL, &col[0]);
+
+		        /* 添加顶层窗口 */
+		        application_add_window(NULL, www);
+
     /* 设置主窗口 */
     application_set_main_window(w);
 
