@@ -415,10 +415,10 @@ static si_t register_window_handler(addr_t app_ptr, si_t parent_descripter, char
 
 		/* 将窗口的信息添加到向量 */
 		vector_push_back(&(app_info_ptr->window_info_vector), &root, sizeof(struct object));
-/*		if(NULL != global_wm.desktop_app_ptr)
+		if(NULL != global_wm.desktop_app_ptr)
 		{
 			send_window_register_message(&global_wm.desktop_app_ptr->uds, NULL, (si_t)win_info_ptr);
-		}*/
+		}
 		win_info_ptr->parent = vector_back(&(app_info_ptr->window_info_vector));
 	}
 	/**

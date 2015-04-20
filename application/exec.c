@@ -657,9 +657,10 @@ handle_window_cancel
 static si_t
 handle_window_register(union message * msg)
 {
-	struct widget* w;
-	w=msg->base.window_descriptor;
-	vector_push_back(&global_application.window_vector,w,sizeof(struct widget));
+	struct window* w;
+	w=window_init("a new window");
+	w->descriptor=msg->base.window_descriptor;
+	vector_push_back(&global_application.window_vector,w,sizeof(struct window));
 }
 
 
