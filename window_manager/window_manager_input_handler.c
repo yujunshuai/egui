@@ -154,6 +154,7 @@ static si_t _do_find_clicked_window(struct window_info_iterator* iter, addr_t ar
 static si_t mask_active_by_mouse_down(union message * msg)
 {
 	struct window_info_iterator iter;
+	int i=0;
 	window_info_iterator_clear(&iter);
 
 	if(!all_app_traversal_decrement(&iter, _do_find_clicked_window, &msg->mouse.cursor_position)) {
@@ -179,9 +180,9 @@ static si_t mask_active_by_mouse_down(union message * msg)
 			}
 		*/	
 			/* 改变活动窗口 */
-			//global_wm.active_win_info_ptr = vector_back( &global_wm.desktop_app_ptr->window_info_vector);
-			//global_wm.active_app_info_ptr = global_wm.desktop_app_ptr;
-			//send_window_activate_message(&global_wm.active_app_info_ptr->uds, msg, (si_t)global_wm.active_win_info_ptr);
+			global_wm.active_win_info_ptr = iter.win_info_ptr;
+			global_wm.active_app_info_ptr = global_wm.desktop_app_ptr;
+			send_window_activate_message(&global_wm.active_app_info_ptr->uds, msg, (si_t)global_wm.active_win_info_ptr);
 		}
 	}
 	/* 在窗口上按下了鼠标的某个键 */

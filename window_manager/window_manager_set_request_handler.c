@@ -568,7 +568,7 @@ static si_t move_window_handler(addr_t app_ptr, si_t window_descripter, si_t x, 
 	area_union(&old_area, &new_area, &union_area);
 	screen_flush(union_area.x, union_area.y, union_area.width, union_area.height);
 
-    memset(global_screen.buffer_addr, 0, global_screen.size);
+    //memset(global_screen.buffer_addr, 0, global_screen.size);
 
 	/* 更新光标 */
 	cursor_paint();
