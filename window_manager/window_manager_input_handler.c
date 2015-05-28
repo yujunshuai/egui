@@ -167,10 +167,10 @@ static si_t mask_active_by_mouse_down(union message * msg)
 	if(iter.app_info_ptr == global_wm.desktop_app_ptr)
 	{
 		/* 原来有活动窗口 */
-		if(global_wm.active_win_info_ptr != global_wm.desktop_app_ptr && global_wm.active_win_info_ptr != NULL )
+		if(global_wm.active_app_info_ptr != global_wm.desktop_app_ptr && global_wm.active_win_info_ptr != NULL )
 		{
 			/* 发送激死消息给原来的活动窗口 */
-			//send_window_deactivate_message(&global_wm.active_app_info_ptr->uds, msg, (si_t)global_wm.active_win_info_ptr);
+			send_window_deactivate_message(&global_wm.active_app_info_ptr->uds, msg, (si_t)global_wm.active_win_info_ptr);
 			/** 通知桌面 **/
 		/*	
 			if(NULL != global_wm.desktop_app_ptr)
@@ -184,12 +184,16 @@ static si_t mask_active_by_mouse_down(union message * msg)
 			global_wm.active_app_info_ptr = global_wm.desktop_app_ptr;
 			send_window_activate_message(&global_wm.active_app_info_ptr->uds, msg, (si_t)global_wm.active_win_info_ptr);
 		}
+
+			global_wm.active_win_info_ptr = iter.win_info_ptr;
+			global_wm.active_app_info_ptr = global_wm.desktop_app_ptr;
+			//send_window_activate_message(&global_wm.active_app_info_ptr->uds, msg, (si_t)global_wm.active_win_info_ptr);
 	}
 	/* 在窗口上按下了鼠标的某个键 */
 	else
 	{
-		/* 原来有活动窗口 */
-		if(global_wm.active_win_info_ptr != global_wm.desktop_app_ptr)
+		/* 原来有活动窗口并且不是他自己 */
+		if(global_wm.active_win_info_ptr != iter.win_info_ptr)
 		{
 			if(global_wm.active_win_info_ptr != NULL)
 			{
@@ -226,9 +230,10 @@ static si_t mask_active_by_mouse_down(union message * msg)
 			}
 			*/
 		}
+		/* 原来的活动窗口是自己 */
 		else{
 				/* 发送激死消息给原来的活动窗口 */
-				send_window_deactivate_message(&global_wm.active_app_info_ptr->uds, msg, (si_t)global_wm.active_win_info_ptr);
+				//send_window_deactivate_message(&global_wm.active_app_info_ptr->uds, msg, (si_t)global_wm.active_win_info_ptr);
 				/* 将活动窗口移动到该用户应用程序的窗口向量的尾部 */
 				vector_move_back(&(iter.app_info_ptr->window_info_vector), iter.win_index);
 
@@ -242,7 +247,7 @@ static si_t mask_active_by_mouse_down(union message * msg)
 				global_wm.active_win_info_ptr = iter.win_info_ptr;
 				global_wm.active_app_info_ptr = iter.app_info_ptr;
 
-				send_window_activate_message(&global_wm.active_app_info_ptr->uds, msg, (si_t)iter.win_info_ptr);
+				//send_window_activate_message(&global_wm.active_app_info_ptr->uds, msg, (si_t)iter.win_info_ptr);
 		}
 	}
 
@@ -453,7 +458,7 @@ static si_t handle_title_bar_press(union message * msg)
 		if(msg->mouse.code == INPUT_CODE_MOUSE_L_KEY)
 		{
 			/* 在活动窗口的标题栏内按键 */
-			if(is_point_in_area(&(msg->mouse.cursor_position), &(global_wm.active_win_info_ptr->title_bar_area)))
+			if(is_point_in_area(&(msg->mouse.cursor_position), &(global_wm.active_win_info_ptr->title_bar_area)) && (global_wm.desktop_app_ptr != global_wm.active_app_info_ptr) )
 			{
 				title_bar_press = 1;/*
 									   printf("title_bar_press = 1\n");*/

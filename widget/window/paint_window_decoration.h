@@ -31,7 +31,8 @@
 #define PAINT_WINDOW_DECORATION_H 1
 
 # include "window.h"
+# include "desktop.h"
 
 extern si_t paint_window_decoration(struct window * w);
-
+extern si_t paint_desktop_decoration(struct window * w);
 #endif

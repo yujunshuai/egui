@@ -151,6 +151,16 @@ extern void window_info_move(struct window_info* win_info_ptr, si_t x_offset, si
 extern void window_info_resize(struct window_info* win_info_ptr, si_t x, si_t y, si_t w, si_t h);
 
 /**
+ * @brief 设置桌面各部分大小
+ *
+ * @param win_info_ptr 窗口指针
+ * @param x 窗口工作区域横坐标
+ * @param y 窗口工作区域纵坐标
+ * @param w 窗口工作区域宽
+ * @param h 窗口工作区域高
+ **/
+extern void desktop_info_resize(struct window_info* win_info_ptr, si_t x, si_t y, si_t w, si_t h);
+/**
  * @brief 窗口最大化
  *
  * @param win_info_ptr 窗口指针

@@ -54,15 +54,14 @@ extern struct window_info* window_info_init(char* title, si_t maxable, si_t mina
     win_info_ptr->lchild = NULL;
     win_info_ptr->rchild = NULL;
     win_info_ptr->name = "struct window_info";
-
-	win_info_ptr->title = malloc(strlen(title) + 1);
-	if(NULL == win_info_ptr->title)
+	
+	if(title != NULL)
 	{
-		EGUI_PRINT_SYS_ERROR("failed to malloc title for window %s. malloc()", title);
-		free(win_info_ptr);
-		return NULL; 
+		win_info_ptr->title = malloc(strlen(title) + 1);
+		strncpy(win_info_ptr->title, title, strlen(title) + 1);
 	}
-    strncpy(win_info_ptr->title, title, strlen(title) + 1);
+	else
+		win_info_ptr->title =NULL;
 
     /* 调用请求处理函数 */
     win_info_ptr->minimize_enable = minable;
@@ -111,6 +110,46 @@ void window_info_resize(struct window_info* win_info_ptr, si_t x, si_t y, si_t w
     /* 退出按钮区域 */
 	rectangle_set(&win_info_ptr->close_button_area,
 		x + w - title_bar_size, y - title_bar_size, title_bar_size, title_bar_size);
+}
+
+void desktop_info_resize(struct window_info* win_info_ptr, si_t x, si_t y, si_t w, si_t h)
+{
+    /* 窗口区域 */
+	rectangle_set(&win_info_ptr->area, 
+		x , y  , w , h );
+
+    /* 用户工作区域 */
+	rectangle_set(&win_info_ptr->work_area, x, y+1, w, h);
+
+    /* 菜单按钮区域 */
+	rectangle_set(&win_info_ptr->menu_button_area,
+			-10, -10, -1, -1);
+
+    /* 标题栏区域 */
+	rectangle_set(&win_info_ptr->title_bar_area,
+		-10 , -10, -1, -1);
+
+    /* 最小化按钮区域 */
+/*	    if(win_info_ptr->minimize_enable == 1)
+    {
+		rectangle_set(&win_info_ptr->minimize_button_area, 
+			x + w - 3 * title_bar_size, y - title_bar_size, title_bar_size, title_bar_size);
+
+        win_info_ptr->title_bar_area.width -= title_bar_size;
+    }
+*/
+    /* 最大化按钮区域 */
+/*    if(win_info_ptr->maximize_enable == 1)
+    {
+		rectangle_set(&win_info_ptr->maximize_button_area, 
+			x + w - 2 * title_bar_size, y - title_bar_size, title_bar_size, title_bar_size);
+
+        win_info_ptr->title_bar_area.width -= title_bar_size;
+    }
+*/
+    /* 退出按钮区域 */
+//	rectangle_set(&win_info_ptr->close_button_area,
+//		x + w - title_bar_size, y - title_bar_size, title_bar_size, title_bar_size);
 }
 
 void window_info_maximum(struct window_info* win_info_ptr, struct rectangle* max_area)

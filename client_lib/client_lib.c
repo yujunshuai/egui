@@ -539,3 +539,16 @@ extern char* get_window_title(si_t window_descriptor)
             (addr_t)&title);
 	return title;
 }
+
+
+extern si_t get_screen_size_w()
+{
+	return send_request_and_return_respond(REQUEST_TYPE_GET_SCREEN_SIZE_W, RESPOND_TYPE_GET_SCREEN_SIZE_W,
+				NULL, 0);
+
+}
+extern si_t get_screen_size_h()
+{
+	return send_request_and_return_respond(REQUEST_TYPE_GET_SCREEN_SIZE_H, RESPOND_TYPE_GET_SCREEN_SIZE_H,
+				NULL, 0);
+}

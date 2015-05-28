@@ -41,6 +41,7 @@ int main()
     si_t video_access_mode = VIDEO_ACCESS_MODE_BUFFER;
 	si_t app_type = APPLICATION_TYPE_NORMAL;
     struct window * w = NULL;
+    struct image_view * im;
 
     /* 初始化用户应用程序 */
     application_init(video_access_mode, app_type, "single_window");
@@ -52,7 +53,26 @@ int main()
         application_exit();
         return -1;
     }
-	window_set_bounds(w, 300, 100, 450, 200);
+	window_set_bounds(w, 300, 500, 450, 200);
+	
+	
+	/* 画背景图片 */
+   im = image_view_init("/home/wangfei/egui/resource/icons/desktop/nature.bmp");
+   if(im == NULL)
+    {
+        application_exit();
+        return -1;
+    }
+	if(NULL == im)
+	{
+		application_exit();
+		return -1;
+	}
+	image_view_set_bounds(im,0,0, 450 , 200);
+	object_attach_child(OBJECT_POINTER(w), OBJECT_POINTER(im));
+
+	
+	
 
     /* 添加顶层窗口 */
     application_add_window(NULL, w);

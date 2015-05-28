@@ -598,4 +598,11 @@ extern si_t set_font(si_t gd, si_t font);
  **/
 extern char* get_window_title(si_t window_descripter);
 
+/*
+ * @brief 获取屏幕尺寸
+ *
+ **/
+extern si_t get_screen_size_w();
+extern si_t get_screen_size_h();
+
 # endif

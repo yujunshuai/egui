@@ -315,6 +315,7 @@ static si_t activate_window_handler(addr_t app_ptr, si_t window_descripter)
 	}
 
 	window_info_iterator_clear(&iter);
+	/* 如果没有找到要激活的窗口，则激死当前活动窗口 */
 	if(0 == all_app_traversal_top_window_decrement(&iter, _do_find_top_window, (addr_t)window_descripter))
     {
         /* 原来有活动窗口 */
@@ -333,7 +334,10 @@ static si_t activate_window_handler(addr_t app_ptr, si_t window_descripter)
             global_wm.active_win_info_ptr = NULL;
             global_wm.active_app_info_ptr = NULL;
         }
+
+		/* 原来没有窗口则不做处理 */
     }
+	/* 找到了待激活的窗口 */
     else if(global_wm.active_win_info_ptr != iter.top_win_info_ptr)
     {
         /* 原来有活动窗口 */
@@ -400,8 +404,10 @@ static si_t register_window_handler(addr_t app_ptr, si_t parent_descripter, char
 		EGUI_PRINT_ERROR("failed to init window info");
 		return -1;
 	}
-
-	window_info_resize(win_info_ptr, x, y, w, h);
+    if(app_ptr == global_wm.desktop_app_ptr)
+		desktop_info_resize(win_info_ptr,x,y,w,h);
+	else
+		window_info_resize(win_info_ptr, x, y, w, h);
 
 	/**
 	 * 顶层窗口:添加到顶层窗口队列中

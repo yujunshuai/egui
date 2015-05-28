@@ -43,6 +43,7 @@
 #include "text_line/text_line.h"
 #include "widget/widget.h"
 #include "window/window.h"
+#include "window/desktop.h"
 #include "dialog/dialog.h"
 #include "image_view/image_view.h"
 #include "checkbox/checkbox.h"

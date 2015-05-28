@@ -147,6 +147,11 @@ enum __respond_type__
 
     /** 回应种类的数目 **/
     RESPOND_TYPE_QUANTITY,
+    
+	/** 获得屏幕尺寸宽X **/
+	RESPOND_TYPE_GET_SCREEN_SIZE_W,
+	/** 获得屏幕尺寸高Y **/
+	RESPOND_TYPE_GET_SCREEN_SIZE_H,
 
     /** 回应种类的最大数目 **/
     /** ISO C restricts enumerator values to range of 'int' **/

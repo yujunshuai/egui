@@ -333,6 +333,24 @@ static si_t _server_lib_handle_request(addr_t body, si_t detail_type, union resp
 		}
 		break;
 		/**
+		 * 获得屏幕尺寸
+		 **/
+	case REQUEST_TYPE_GET_SCREEN_SIZE_W:
+		{
+			
+			func_ret = global_screen.width;
+			respond_set_normal(respond_ptr, RESPOND_TYPE_GET_SCREEN_SIZE_W, func_ret);
+		}
+		break;
+	case REQUEST_TYPE_GET_SCREEN_SIZE_H:
+		{
+			
+			func_ret = global_screen.height;
+			respond_set_normal(respond_ptr, RESPOND_TYPE_GET_SCREEN_SIZE_H, func_ret);
+		}
+		break;
+				
+		/**
 		 * 接到window_manager_quit命令 若成功执行则返回退出循环的
 		 **/
 	case REQUEST_TYPE_WINDOW_MANAGER_QUIT:

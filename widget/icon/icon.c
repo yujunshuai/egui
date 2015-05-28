@@ -121,9 +121,10 @@ si_t   icon_update_all_areas ( struct icon * ic )
 		ic->text_field.width = area.width;
 		ic->text_field.height = text_line_num * font_height ;
 
-		ic->img_field.x = area.x + area.width/4 ;
+		ic->img_field.x = area.x  ;
+		//ic->img_field.x = area.x + area.width/4 ;
 		ic->img_field.y = area.y  ;
-		ic->img_field.width = area.width/2 ;
+		ic->img_field.width = area.width ;
 		ic->img_field.height = area.height - ic->text_field.height;
 
 	}

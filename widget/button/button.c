@@ -152,9 +152,11 @@ static void _paint_button(struct button* b, si_t is_pressed, struct rectangle* a
 		set_color(b->gd, b->fore_color.r, b->fore_color.g, b->fore_color.b, b->fore_color.a);
 	}
 
-	/* button 右边框和下边框 */
+	/* button 画四边框 */
 	draw_line(b->gd, x + b->area.width - 1, y, x + b->area.width - 1, y + b->area.height - 1);
 	draw_line(b->gd, x, y + b->area.height - 1, x + b->area.width - 1, y + b->area.height - 1);
+	draw_line(b->gd, x, y, x + b->area.width - 1, y);
+	draw_line(b->gd, x, y, x, y + b->area.height - 1);
 
 	/* 前景色 */
 	set_color(b->gd, b->fore_color.r, b->fore_color.g, b->fore_color.b, b->fore_color.a);
@@ -169,8 +171,8 @@ static void _paint_button(struct button* b, si_t is_pressed, struct rectangle* a
 	}
 
 	/* button 上边框和左边框 */
-	draw_line(b->gd, x, y, x + b->area.width - 1, y);
-	draw_line(b->gd, x, y, x, y + b->area.height - 1);
+	//draw_line(b->gd, x, y, x + b->area.width - 1, y);
+	//draw_line(b->gd, x, y, x, y + b->area.height - 1);
 }
 
 static si_t button_default_widget_repaint(struct button * b, union message * msg)

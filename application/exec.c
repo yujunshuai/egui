@@ -657,10 +657,12 @@ handle_window_cancel
 static si_t
 handle_window_register(union message * msg)
 {
+	/*
 	struct window* w;
 	w=window_init("a new window");
 	w->descriptor=msg->base.window_descriptor;
 	vector_push_back(&global_application.window_vector,w,sizeof(struct window));
+	*/
 }
 
 
@@ -671,7 +673,7 @@ static void application_handle_message(union message* msg)
 	/**
 	 * 如果是桌面程序 那么首先将消息发给桌面的回调函数处理
 	 **/
-	/*
+	
 	if(global_application.application_type & APPLICATION_TYPE_DESKTOP)
 	{
 		if(global_application.desktop_msg_handler != NULL)
@@ -679,7 +681,7 @@ static void application_handle_message(union message* msg)
 			global_application.desktop_msg_handler(global_application.desktop_ptr, msg);
 		}
 	}
-	*/
+	
     switch(msg->base.type)
     {
     case MESSAGE_TYPE_KEYBD_PRESS:

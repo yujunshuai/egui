@@ -142,12 +142,17 @@ enum __request_type__
     /** 获得文字高度 **/
     REQUEST_TYPE_GET_FONT_HEIGHT,
 
-	/** 获得窗口信息 **/
-	REQUEST_TYPE_GET_WINDOW_TITLE,
+    /** 获得窗口信息 **/
+    REQUEST_TYPE_GET_WINDOW_TITLE,
 
     /** 请求种类的数目 **/
     REQUEST_TYPE_QUANTITY,
 
+	/** 获得屏幕尺寸宽X **/
+	REQUEST_TYPE_GET_SCREEN_SIZE_W,
+	/** 获得屏幕尺寸高Y **/
+	REQUEST_TYPE_GET_SCREEN_SIZE_H,
+	
     /** 请求种类的最大数目 **/
     /** ISO C restricts enumerator values to range of 'int' **/
     REQUEST_TYPE_MAX = INT_MAX
