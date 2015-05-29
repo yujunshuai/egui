@@ -418,21 +418,23 @@ static si_t interface_init()
 	engine_draw_circle(gd,6*global_screen.width/14,9*global_screen.height/16,5);
     screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
 
-	sleep(1);
+	//sleep(1);
 	engine_draw_circle(gd,7*global_screen.width/14,9*global_screen.height/16,5);
     screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
     
-	sleep(1);
+	//sleep(1);
 	engine_draw_circle(gd,8*global_screen.width/14,9*global_screen.height/16,5);
     screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
     
-    sleep(1);
+    //sleep(1);
     engine_clear(gd);
+    
 	pid_t id;
 	id = fork();
 	if(id == 0){
 		execl("/home/wangfei/egui/_bulid/debug/samples/Desktop","./Desktop",NULL);
 	}
+	
     return 0;
 }
 

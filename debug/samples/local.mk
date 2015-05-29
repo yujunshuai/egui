@@ -25,6 +25,7 @@ noinst_PROGRAMS += %D%/multi_windows\
 %C%_Desktop_SOURCES =%D%/Desktop.c
 
 
+
 %C%_multi_windows_LDADD = $(debug_samples_LDADD_TEMP)
 %C%_shutdown_LDADD = $(debug_samples_LDADD_TEMP)
 %C%_pop_up_window_LDADD = $(debug_samples_LDADD_TEMP)
@@ -36,6 +37,7 @@ noinst_PROGRAMS += %D%/multi_windows\
 %C%_tab_LDADD = $(debug_samples_LDADD_TEMP)
 %C%_game_LDADD = $(debug_samples_LDADD_TEMP)
 %C%_Desktop_LDADD = $(debug_samples_LDADD_TEMP)
+
 
 
 include $(top_srcdir)/debug/samples/calculator/local.mk

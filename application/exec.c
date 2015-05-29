@@ -663,6 +663,34 @@ handle_window_register(union message * msg)
 	w->descriptor=msg->base.window_descriptor;
 	vector_push_back(&global_application.window_vector,w,sizeof(struct window));
 	*/
+	//struct icon* ic_ptr = malloc(sizeof(struct icon*));
+	/*
+	struct icon* ic_ptr = NULL;
+	ic_ptr = icon_init(2);
+	
+    	ic_ptr->back_color.r = 0;
+    	ic_ptr->back_color.g = 100;
+    	ic_ptr->back_color.b = 0;
+    	ic_ptr->back_color.a = 0;
+    	icon_set_bounds(ic_ptr ,100,0,48,48);
+    	icon_set_is_text_visiable(ic_ptr ,0); 
+		icon_set_text(ic_ptr,"calc");
+		icon_set_img_path(ic_ptr,"/home/wangfei/egui/resource/icons/calculator_big.bmp");
+		ic_ptr->callback = NULL;
+	object_attach_child(OBJECT_POINTER(global_application.main_window), OBJECT_POINTER(ic_ptr));
+	*/
+	/*
+	static i=1;
+	struct button * b = NULL;
+	b = button_init("click me!");
+	button_set_bounds(b, 100*i, 0, 70, 30);
+	i++;
+	struct color xue_blue = {0x77,0x7b,0xce,0};
+	button_set_color(b, NULL, &xue_blue);
+    //b->callback = NULL;
+    object_attach_child(OBJECT_POINTER(global_application.main_window), OBJECT_POINTER(b));
+    */
+
 }
 
 

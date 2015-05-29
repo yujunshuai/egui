@@ -82,7 +82,6 @@ int main()
 	si_t app_type = APPLICATION_TYPE_NORMAL;
     struct window * w = NULL;
     struct button * b = NULL;
-    struct image_view * im;
 
     /* 初始化用户应用程序 */
     application_init(video_access_mode, app_type, "pop_up_window");
@@ -111,25 +110,7 @@ int main()
     b->callback = button_callback;
     
     
-    	/* 画背景图片 */
-   im = image_view_init("/home/wangfei/egui/resource/icons/desktop/nature.bmp");
-   if(im == NULL)
-    {
-        application_exit();
-        return -1;
-    }
-	if(NULL == im)
-	{
-		application_exit();
-		return -1;
-	}
-	image_view_set_bounds(im,0,0, 450 , 200);
-	object_attach_child(OBJECT_POINTER(w), OBJECT_POINTER(im));
 	
-	
-
-    /* 将两个按钮添加到窗口 */
-    object_attach_child(OBJECT_POINTER(im), OBJECT_POINTER(b));
 
     /* 添加顶层窗口 */
     application_add_window(NULL, w);
