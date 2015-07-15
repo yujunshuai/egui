@@ -64,6 +64,8 @@ void *icon_init(si_t id)
     }
     addr->name = "struct icon";
 
+	addr->flag = 0;
+
 	addr->img_field.x = 0;
 	addr->img_field.y = 0;
 	addr->img_field.width = 0;
@@ -241,6 +243,24 @@ void  icon_set_img_path(struct icon *ic, char * img_path)
 char* icon_get_img_path(struct icon *ic)
 {
 	return ic->img_path;
+}
+void  icon_set_img_normal_path(struct icon *ic, char * img_path)
+{
+	strcpy(ic->img_normal_path,img_path);
+	return ;
+}
+char* icon_get_img_normal_path(struct icon *ic)
+{
+	return ic->img_normal_path;
+}
+void  icon_set_img_select_path(struct icon *ic, char * img_path)
+{
+	strcpy(ic->img_select_path,img_path);
+	return ;
+}
+char* icon_get_img_select_path(struct icon *ic)
+{
+	return ic->img_select_path;
 }
 void  icon_set_text(struct icon *ic, char * text)
 {
