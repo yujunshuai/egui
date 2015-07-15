@@ -297,7 +297,7 @@ extern si_t send_window_close_message(struct egui_uds* uds_ptr, union message* m
  *
  * @return 成功返回0，否则返回-1
  **/
-extern si_t send_window_register_message(struct egui_uds* uds_ptr, union message* msg, si_t window_descripter);
+extern si_t send_window_register_message(struct egui_uds* uds_ptr, union message* msg, si_t window_descripter, char* t);
 
 /**
  * 发送窗口取消消息
@@ -310,6 +310,16 @@ extern si_t send_window_register_message(struct egui_uds* uds_ptr, union message
  **/
 extern si_t send_window_cancel_message(struct egui_uds* uds_ptr, union message* msg, si_t window_descripter);
 
+/**
+ * 向桌面发送APP窗口取消消息
+ *
+ * @param uds_ptr 客户端通信句柄
+ * @param msg 已被读取的输入事件(可为NULL)
+ * @param window_descripter 窗口的描述符
+ *
+ * @return 成功返回0，否则返回-1
+ **/
+extern si_t send_app_window_cancel_message(struct egui_uds* uds_ptr, union message* msg, si_t window_descripter);
 /**
  * 发送应用程序退出消息
  *

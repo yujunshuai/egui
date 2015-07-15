@@ -9,9 +9,7 @@ noinst_PROGRAMS += %D%/multi_windows\
 				   %D%/timer\
 				   %D%/text_clock\
 			   	   %D%/tab\
-		   		   %D%/game\
-				   %D%/Desktop
-
+		   		   %D%/game
 %C%_multi_windows_SOURCES = %D%/multi_windows.c
 %C%_shutdown_SOURCES = %D%/shutdown.c
 %C%_pop_up_window_SOURCES = %D%/pop_up_window.c
@@ -22,7 +20,7 @@ noinst_PROGRAMS += %D%/multi_windows\
 %C%_text_clock_SOURCES = %D%/text_clock.c
 %C%_tab_SOURCES = %D%/tab.c
 %C%_game_SOURCES = %D%/game.c
-%C%_Desktop_SOURCES =%D%/Desktop.c
+
 
 
 
@@ -36,9 +34,10 @@ noinst_PROGRAMS += %D%/multi_windows\
 %C%_text_clock_LDADD = $(debug_samples_LDADD_TEMP)
 %C%_tab_LDADD = $(debug_samples_LDADD_TEMP)
 %C%_game_LDADD = $(debug_samples_LDADD_TEMP)
-%C%_Desktop_LDADD = $(debug_samples_LDADD_TEMP)
+
 
 
 
 include $(top_srcdir)/debug/samples/calculator/local.mk
 include $(top_srcdir)/debug/samples/file_browser/local.mk
+include $(top_srcdir)/debug/samples/Desktop/local.mk

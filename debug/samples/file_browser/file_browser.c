@@ -60,6 +60,67 @@ struct my_widget * mw;
 /* scroll bar for my widget */
 struct scroll_bar* s;
 
+//si_t num_1=4;
+
+si_t window_callback(addr_t w, addr_t m)
+{
+    struct window * self = w;
+    union message * msg = m;
+    window_default_callback(w, m);
+    //widget_default_callback(self, msg);
+    switch(msg->base.type)
+    {
+        case MESSAGE_TYPE_WINDOW_MAXIMIZE:
+        /*
+            printf("MESSAGE_TYPE_WINDOW_MAXIMIZE\n");
+        */
+            label_set_bounds(l, 105, 6, 1200, 26);
+            scroll_bar_set_bounds(s, 1330, 43, 20, 680);
+            button_set_bounds(b1, 10, 6, 90, 26);
+            mw->area.x = 10;
+            mw->area.width = 1310;
+            mw->area.height = 680;
+            num=11;
+            mw->count=77;
+            mw->start = 0;
+            scroll_bar_set_view(s, 90 * ((vector_size(&file_list)-1)/num+2), 0);
+            scroll_bar_update_offset(s, 0);
+            //scroll_bar_repaint(s);
+            //scroll_bar_show(s);
+            //my_widget_repaint(mw);
+            //my_widget_show(mw);
+
+           // label_repaint(l);
+            //label_show(l);
+            
+            //window_default_window_maximize(self, msg);
+            break;
+        case MESSAGE_TYPE_WINDOW_RESTORE:
+        /*
+            printf("MESSAGE_TYPE_WIDGET_RESIZE\n");
+        */
+            label_set_bounds(l, 100, 6, 400, 26);
+            scroll_bar_set_bounds(s, 475, 43, 20, 384);
+            button_set_bounds(b1, 5, 6, 90, 26);
+            mw->area.x = 5;
+            mw->area.width = 465;
+            mw->area.height = 384;
+            num=4;
+            mw->count=16;
+            mw->start = 0;
+            scroll_bar_set_view(s, 90 * ((vector_size(&file_list)-1)/num+2), 0);
+            scroll_bar_update_offset(s, 0);
+        
+            break;
+
+        default:
+            //window_default_callback(w, m);
+            break;
+    }
+    return 0;
+}
+
+
 static void mywidget_subscribe_scrollbar(struct widget* subscriber, struct widget* pulisher, si_t event)
 {
     struct scroll_bar* s = SCROLL_BAR_POINTER(pulisher);
@@ -74,7 +135,7 @@ static void mywidget_subscribe_scrollbar(struct widget* subscriber, struct widge
     case SCROLL_BAR_EVENT_LINE_UP:
         if(mw->start > 0)
         {
-            -- (mw->start);
+            mw->start-=num;
 
             my_widget_repaint(mw);
             my_widget_show(mw);
@@ -87,7 +148,7 @@ static void mywidget_subscribe_scrollbar(struct widget* subscriber, struct widge
     case SCROLL_BAR_EVENT_LINE_DOWN:
         if(mw->start + mw->count < (si_t)vector_size(&file_list))
         {
-            ++ (mw->start);
+            mw->start+=num;
 
             my_widget_repaint(mw);
             my_widget_show(mw);
@@ -98,7 +159,7 @@ static void mywidget_subscribe_scrollbar(struct widget* subscriber, struct widge
          * press spaces above elevator
          **/
     case SCROLL_BAR_EVENT_PAGE_UP:
-        if((mw->start -= lines_per_page) < 0)
+        if((mw->start -= mw->count) < 0)
             mw->start = 0;
         my_widget_repaint(mw);
         my_widget_show(mw);
@@ -109,17 +170,20 @@ static void mywidget_subscribe_scrollbar(struct widget* subscriber, struct widge
          * press spaces below elevator
          **/
     case SCROLL_BAR_EVENT_PAGE_DOWN:
-        if((mw->start += lines_per_page) > (si_t)vector_size(&file_list) - mw->count)
-            mw->start = vector_size(&file_list) - mw->count;
-        my_widget_repaint(mw);
-        my_widget_show(mw);
+        if(mw->start + mw->count < (si_t)vector_size(&file_list))
+        {
+           // mw->start = ((vector_size(&file_list)-1)/num+1 - mw->count/num)*num;
+           mw->start += mw->count;
+           my_widget_repaint(mw);
+           my_widget_show(mw);
+        } 
         break;
 
         /**
          * move elevator
          **/
     case SCROLL_BAR_EVENT_CHANGE:
-        mw->start = s->cur_offset / s->line_height;
+        mw->start = (s->cur_offset / s->line_height)*num;
         my_widget_repaint(mw);
         my_widget_show(mw);
         break;
@@ -150,7 +214,7 @@ button1_callback
                 directory_content(working_directory, &file_list);
 
                 mw->start = 0;
-                scroll_bar_set_view(s, get_font_height(mw->gd) * vector_size(&file_list), 0);
+                scroll_bar_set_view(s, 90 * ((vector_size(&file_list)-1)/num+2), 0);
                 scroll_bar_update_offset(s, 0);
                 scroll_bar_repaint(s);
                 scroll_bar_show(s);
@@ -278,8 +342,9 @@ int main(int argc, char* argv[])
         application_exit();
         return -1;
     }
-	window_set_bounds(w, 300, 100, 500, 440);
+	window_set_bounds(w, 300, 100, 500, 430);
 	window_set_color(w, NULL, &light_green);
+      w->callback=window_callback;
 
     /* 申请按钮 */
     b1 = button_init("parent");
@@ -318,8 +383,8 @@ int main(int argc, char* argv[])
     mw->area.x = 5;
     mw->area.y = 38;
     mw->area.width = 465;
-    mw->area.height = 394;
-    mw->font = FONT_MATRIX_12;
+    mw->area.height = 384;
+    mw->font = FONT_MATRIX_08;
     mw->start = 0;
     mw->count = 16;
     set_font(mw->gd, mw->font);
@@ -328,7 +393,7 @@ int main(int argc, char* argv[])
     /**
      * scroll_bar
      **/
-    s = scroll_bar_init(1, font * vector_size(&file_list), font);
+    s = scroll_bar_init(1, 90 * ((vector_size(&file_list)-1)/num+2), 90);
     if(s == NULL)
     {
         application_exit();

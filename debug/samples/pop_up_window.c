@@ -62,7 +62,7 @@ button_callback
 			window_set_color(w, NULL, &barely_blue);
 
             /* 添加顶层窗口 */
-            application_add_window(NULL, w);
+            application_add_window(global_application.main_window, w);
             break;
 
         default:
@@ -87,7 +87,7 @@ int main()
     application_init(video_access_mode, app_type, "pop_up_window");
 
     /* 申请窗口 */
-    w = window_init("root window");
+    w = window_init("pop_up_window");
     /* 申请失败 */
     if(w == NULL)
     {
@@ -111,6 +111,7 @@ int main()
     
     
 	
+	object_attach_child(OBJECT_POINTER(w), OBJECT_POINTER(b));
 
     /* 添加顶层窗口 */
     application_add_window(NULL, w);

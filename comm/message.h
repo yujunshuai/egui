@@ -110,8 +110,11 @@ enum __message_type__
 	MESSAGE_TYPE_WINDOW_REGISTER,
 	/* 取消窗口：仅适用于桌面 **/
 	MESSAGE_TYPE_WINDOW_CANCEL,
+	
+	/** 在桌面注销APP窗口相关 **/
+    MESSAGE_TYPE_APP_WINDOW_CANCEL,
 
-	/* 程序推出 */
+	/* 程序退出 */
 	MESSAGE_TYPE_APPLICATION_QUIT,
 
     /** 自定义 **/
@@ -682,9 +685,10 @@ extern void message_set_window_close(union message* m, si_t w);
 struct message_window_register
 {
     MESSAGE_BASE_DEFINITION
+	char title[20];
 };
 
-extern void message_set_window_register(union message* m, si_t w);
+extern void message_set_window_register(union message* m, si_t w, char* t);
 
 /**
  * 取消窗口
@@ -697,6 +701,20 @@ struct message_window_cancel
 };
 
 extern void message_set_window_cancel(union message* m, si_t w);
+
+
+/**
+ * 在桌面取消APP窗口相关
+ *
+ * 当一个APP顶层窗口在服务器端被取消之后，服务器将这条消息发送给桌面程序
+**/
+struct message_app_window_cancel
+{
+    MESSAGE_BASE_DEFINITION
+};
+
+extern void message_set_app_window_cancel(union message* m, si_t w);
+
 
 union message
 {
@@ -715,6 +733,7 @@ union message
     struct message_window_close      window_close;
 	struct message_window_register	 window_register;
 	struct message_window_cancel	 window_cancel;
+	struct message_app_window_cancel window_app_cancel;
     struct message_keyboard_leave    keybd_leave;
     char * message_custom;
 };

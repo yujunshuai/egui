@@ -80,19 +80,7 @@ set_window_color
     }
     return 0;
 }
-static si_t
-set_desktop_color
-(struct window* w,
- struct color* c)
-{
-    int r = c->r;
-    int g = c->g;
-    int b = c->b;
-    int a = c->a;
 
-        set_color(w->gd, r, g, b, a);
-    return 0;
-}
 
 
 /**
@@ -222,40 +210,7 @@ paint_window_title_bar
 }
 
 
-/**
- * 绘制桌面的标题栏
- *
- * @param w 窗口指针
- *
- * @return 0
-**/
-static si_t
-paint_desktop_title_bar
-(struct window * w)
-{
-    si_t i, x, y, width, height;
 
-    x = w->area.x;
-    y = w->area.y;
-    width = w->area.width;
-    height =30;
-
-   
-    set_area(w->gd, x, y, width, height);
-
-    /* 背景 */
-    set_desktop_color(w, &window_default_style.menu_bar_backcolor);
-    fill_rectangle(w->gd, x, y, width, height);
-
-    /* 字体 */
-    set_window_color(w, &window_default_style.title_bar_font_color);
-    set_font(w->gd, FONT_MATRIX_12);
-    /* 标题 */
-    show_text(w->gd, x + 10, y , w->title, strlen(w->title));
-
-
-    return 0;
-}
 
 
 /**
@@ -403,7 +358,4 @@ si_t paint_window_decoration(struct window * w)
 
     return 0;
 }
-si_t paint_desktop_decoration(struct window * w)
-{
-	paint_desktop_title_bar(w);
-}
+

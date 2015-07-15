@@ -47,7 +47,7 @@
 
 static struct color barely_blue = {0xcb, 0xf3, 0xfb, 0};
 static struct color light_blue = {0x46, 0xa5, 0xe5, 0};
-
+si_t num =4;
 si_t
 my_widget_default_widget_show
 (struct my_widget * mw,
@@ -151,44 +151,79 @@ my_widget_default_widget_repaint
     /* 获得字体的高度 */
     font_height = get_font_height(mw->gd);
 
-    n = vector_size(&file_list);
+    n = (si_t)vector_size(&file_list);
 
     x1 = x + mw->border_size;
     y1 = y + mw->border_size;
-
-    /* 目录项的数目大于能显示的数目 */
-    if((si_t)vector_size(&file_list) > mw->count)
-    {
-        /* 目录项开始的索引 */
+    char file_name[15]="";
+    /* 目录项开始的索引 */
         temp = mw->start;
+    /* 目录项的数目大于能显示的数目 */
+    if(n -temp> mw->count)
+    {
+        
         for(i = 0; i < mw->count; ++ i)
         {
+            memset(file_name,0,sizeof(file_name));
             di_ptr = vector_at(&file_list, temp ++);
-
+            set_area(mw->gd,x1+110*(i%num)+30,y1+90*(i/num)+15,60,58);
+            set_color(mw->gd,mw->back_color.r,mw->back_color.g, mw->back_color.b,mw->back_color.a);
+           if(di_ptr->is_directory == 1)
+	   {
+		draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/dir_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+	   }
+           else
+             draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/readable_file_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+           set_area(mw->gd,area.x,area.y,area.width,area.height);
+           set_color(mw->gd,mw->fore_color.r,mw->fore_color.g,mw->fore_color.b, mw->fore_color.a);
+             if(strlen(di_ptr->name)>12)
+             {
+               strncpy(file_name, di_ptr->name+2, 9);
+               strncpy(file_name+9, "...", 3);
+             }
+             else
+                strcpy(file_name, di_ptr->name+2);  
             show_text
             (mw->gd,
-             x1,
-             y1,
-             di_ptr->name,
-             strlen(di_ptr->name));
+             x1+110*(i%num)+30-(strlen(file_name) - 7)*4,
+             y1+90*(i/num)+60+12,
+             file_name,
+             strlen(file_name));
 
-            y1 += font_height;
+            //y1 += font_height;
         }
     }
     else
     {
-        for(i = mw->start; i < n; ++ i)
+        for(i = 0; i < n -temp; ++ i)
         {
-            di_ptr = vector_at(&file_list, i);
-
+            memset(file_name,0,sizeof(file_name));
+            di_ptr = vector_at(&file_list, temp+i);
+            set_area(mw->gd,x1+110*(i%num)+30,y1+90*(i/num)+15,60,58);
+            set_color(mw->gd,mw->back_color.r,mw->back_color.g, mw->back_color.b,mw->back_color.a);
+           if(di_ptr->is_directory == 1)
+	   {
+		draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/dir_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+	   }
+           else
+             draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/readable_file_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+           set_area(mw->gd,area.x,area.y,area.width,area.height);
+           set_color(mw->gd,mw->fore_color.r,mw->fore_color.g,mw->fore_color.b, mw->fore_color.a);
+             if(strlen(di_ptr->name)>12)
+             {
+               strncpy(file_name, di_ptr->name+2, 9);
+               strncpy(file_name+9, "...", 3);
+             }
+             else
+                strcpy(file_name, di_ptr->name+2);  
             show_text
             (mw->gd,
-             x1,
-             y1,
-             di_ptr->name,
-             strlen(di_ptr->name));
+             x1+110*(i%num)+30-(strlen(file_name) - 7)*4,
+             y1+90*(i/num)+60+12,
+             file_name,
+             strlen(file_name));
 
-            y1 += font_height;
+            //y1 += font_height;
         }
     }
 
@@ -222,7 +257,7 @@ my_widget_default_mouse_single_click
 {
     struct rectangle area;
     struct directory_item * di_ptr;
-    si_t x, y, y1, index;
+    si_t x, y, x1,y1, index;
 
     if(msg->mouse.code == INPUT_CODE_MOUSE_L_KEY)
     {
@@ -234,9 +269,10 @@ my_widget_default_mouse_single_click
         application_widget_absolute_area(WIDGET_POINTER(mw), &area);
 
         /* 双击了那个目录项 */
-        y1 = msg->mouse.cursor_position.y - area.y;
+        y1 = msg->mouse.cursor_position.y - y;
+        x1 = msg->mouse.cursor_position.x - x;
 
-        index = y1 / 24;
+        index = (y1-15)/90*num +(x1-30)/110;
         if(index >= (si_t)vector_size(&file_list))
             return 0;
 
@@ -255,7 +291,7 @@ my_widget_default_mouse_single_click
 
             mw->start = 0;
 
-            scroll_bar_set_view(s, get_font_height(mw->gd) * vector_size(&file_list), 0);
+            scroll_bar_set_view(s, 90 * ((vector_size(&file_list)-1)/num+2), 0);
             scroll_bar_update_offset(s, 0);
             scroll_bar_repaint(s);
             scroll_bar_show(s);

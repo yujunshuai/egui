@@ -847,7 +847,7 @@ si_t window_manager_input_handler(struct egui_uds* uds_ptr, addr_t arg)
 			}
 			else
 			{
-				handle_desktop_release(message);
+				//handle_desktop_release(message);
 
 				handle_button_release(message);
 

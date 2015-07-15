@@ -427,12 +427,12 @@ static si_t interface_init()
     screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
     
     //sleep(1);
-    engine_clear(gd);
+    //engine_clear(gd);
     
 	pid_t id;
 	id = fork();
 	if(id == 0){
-		execl("/home/wangfei/egui/_bulid/debug/samples/Desktop","./Desktop",NULL);
+		execl("/home/wangfei/egui/_bulid/debug/samples/Desktop/Desktop","./Desktop",NULL);
 	}
 	
     return 0;
@@ -506,7 +506,7 @@ si_t window_manager_init()
 		return -1;
 	}
 
-	if(0 != event_init(1000))
+	if(0 != event_init(200000))		//双击识别未0.2秒
 	{
 		EGUI_PRINT_ERROR("failed to init event module");
 		return -1;

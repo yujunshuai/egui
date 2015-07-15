@@ -57,7 +57,7 @@ enum __request_type__
     /** 注册窗口 **/
     REQUEST_TYPE_REGISTER_WINDOW,
     /** 注销窗口 **/
-    REQUEST_TYPE_CANCEL_WINDOW,
+    REQUEST_TYPE_CANCEL_WINDOW,    
     /** 移动窗口 **/
     REQUEST_TYPE_MOVE_WINDOW,
     /** 改变窗口大小 **/

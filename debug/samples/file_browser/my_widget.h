@@ -44,6 +44,7 @@ extern struct vector file_list;
 extern struct label * l;
 
 extern struct scroll_bar* s;
+extern si_t num ;
 
 struct my_widget
 {

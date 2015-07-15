@@ -264,12 +264,28 @@ extern void message_set_window_close(union message* m, si_t w)
 	message_set_window(m, w, MESSAGE_TYPE_WINDOW_CLOSE);
 }
 
-extern void message_set_window_register(union message* m, si_t w)
+extern void message_set_window_register(union message* m, si_t w, char* t)
 {
 	message_set_window(m, w, MESSAGE_TYPE_WINDOW_REGISTER);
+	if(t!=NULL){
+		if(strlen(t)>=20){
+			strncpy(m->window_register.title, t, 19);	//认为所有程序名短于20字符	
+			m->window_register.title[19] = 0;
+		}
+		else
+			strncpy(m->window_register.title, t, strlen(t));	//认为所有程序名短于20字符	
+			
+	}
+	else
+		memset(m->window_register.title, 0, 20);			//固定20字符
 }
 
 extern void message_set_window_cancel(union message* m, si_t w)
 {
 	message_set_window(m, w, MESSAGE_TYPE_WINDOW_CANCEL);
+}
+
+extern void message_set_app_window_cancel(union message* m, si_t w)
+{
+	message_set_window(m, w, MESSAGE_TYPE_APP_WINDOW_CANCEL);
 }

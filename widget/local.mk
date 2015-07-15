@@ -8,7 +8,6 @@ library_libwidget_la_SOURCES = %D%/widget/widget.c\
 					   %D%/text_line/text_line.c\
 					   %D%/image_view/image_view.c\
 					   %D%/window/window.c\
-					   %D%/window/desktop.c\
 					   %D%/window/paint_window_decoration.c\
 					   %D%/dialog/dialog.c\
 					   %D%/icon/icon.c\
@@ -31,7 +30,6 @@ nobase_pkginclude_HEADERS += %D%/widget/widget.h\
 							 %D%/text_line/text_line.h\
 							 %D%/image_view/image_view.h\
 							 %D%/window/window.h\
-							 %D%/window/desktop.h\
 							 %D%/dialog/dialog.h\
 							 %D%/icon/icon.h\
 							 %D%/checkbox/checkbox.h\
