@@ -1,0 +1,18 @@
+（默认将egui文件夹放在主目录下）
+安装步骤：
+	1. 在egui/目录下,执行autoreconf -fi
+	2. mkdir _bulid
+	   cd _bulid
+	   ../configure
+	   make
+
+运行步骤：
+	在字符终端 cd egui/_bulid
+	sudo window_manager/server
+
+
+
+
+配置设置：
+	在debug/samples/Desktop/Desktop.c 和 window_manager/window_manager.c文件中把“wangfei”改成自己的用户名
+	应用程序的菜单图标（左上角小图标）需要在主文件加下新建 ～/.egui/icons文件夹，icons即为egui/resource/icons文件夹

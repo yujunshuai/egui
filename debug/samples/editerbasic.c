@@ -12,7 +12,7 @@
 #include "compiler.h"
 
 #define LABEL_MAX 128
-#define FILE_MAX  4096
+#define FILE_MAX  20000//4096
 
 static struct color barely_blue = {0xcb, 0xf3, 0xfb, 0};
 static struct color dark_blue = {0x18, 0x29, 0x45, 0};
@@ -28,6 +28,60 @@ struct label* file_label = NULL;
 struct window* main_window = NULL;
 struct window* save_window = NULL;
 struct text_line* save_text_line = NULL;
+struct scroll_bar* s;
+struct button* b1 = NULL, *b2 = NULL;
+si_t fonty = 0;
+si_t fontx=0;
+
+si_t width_screen=0;
+si_t height_screen=0;
+si_t window_callback(addr_t w, addr_t m)
+{
+    struct window * self = w;
+    union message * msg = m;
+    window_default_callback(w, m);
+    switch(msg->base.type)
+    {
+        case MESSAGE_TYPE_WINDOW_MAXIMIZE:
+        /*
+            printf("MESSAGE_TYPE_WINDOW_MAXIMIZE\n");
+        */
+            height_screen=self->area.height;
+            width_screen=self->area.width;
+            button_set_bounds(b1, width_screen-180, 5, 60, 30);
+            label_set_bounds(file_label, 10, 10, width_screen-210, 20);
+            button_set_bounds(b2, width_screen-110, 5, 100, 30);
+	    text_line_set_bounds(file_context_text_line, 5, 40, width_screen-30, height_screen-70);
+            text_line_update_ruler_line(file_context_text_line, 1);
+            scroll_bar_set_bounds(s, width_screen-25, 40, 20, height_screen-70);
+            fonty = get_font_height(file_context_text_line->gd);
+            scroll_bar_set_view(s, fonty * (text_line_get_line_total(file_context_text_line)+3), 0);
+            scroll_bar_update_offset(s, 0);
+            label_set_bounds(log_label, 5, height_screen-25, 450, 20);
+            break;
+        case MESSAGE_TYPE_WINDOW_RESTORE:
+        /*
+            printf("MESSAGE_TYPE_WIDGET_RESIZE\n");
+        */
+            button_set_bounds(b1, 380, 5, 60, 30);
+            label_set_bounds(file_label, 10, 10, 365, 20);
+            button_set_bounds(b2, 445, 5, 100, 30);
+	    text_line_set_bounds(file_context_text_line, 5, 40, 520, 230);
+            text_line_update_ruler_line(file_context_text_line, 1);
+            scroll_bar_set_bounds(s, 525, 40, 20, 230);
+            fonty = get_font_height(file_context_text_line->gd);
+            scroll_bar_set_view(s, fonty * (text_line_get_line_total(file_context_text_line)+3), 0);
+            scroll_bar_update_offset(s, 0);
+            label_set_bounds(log_label, 5, 275, 450, 20);
+        
+            break;
+
+        default:
+            //window_default_callback(w, m);
+            break;
+    }
+    return 0;
+}
 
 void text_line_subscribe_scrollbar(struct widget* subscriber, struct widget* pulisher, si_t event)
 {
@@ -35,7 +89,6 @@ void text_line_subscribe_scrollbar(struct widget* subscriber, struct widget* pul
     struct scroll_bar* s = SCROLL_BAR_POINTER(pulisher);
     si_t lineno_cur = text_line_get_line_cur(t);
     si_t lines_per_page = text_line_get_max_line_shown(t);
-
     switch(event)
     {
     /**
@@ -282,14 +335,14 @@ static si_t load_file(char* file_name, char* buf)
 
 int main(int argc, char* argv[])
 {
-    struct scroll_bar* s;
-    struct button* b1 = NULL, *b2 = NULL;
     char msg[LABEL_MAX];
 	char file_msg[LABEL_MAX];
     si_t video_access_mode = VIDEO_ACCESS_MODE_BUFFER;
 	si_t app_type = APPLICATION_TYPE_NORMAL;
 	char* file_name = NULL;
 	si_t fonty = 0;
+        si_t fontx=0;
+    struct stat file_info;///////////
 
     /**
      * open with file
@@ -341,6 +394,7 @@ int main(int argc, char* argv[])
     }
     window_set_bounds(main_window, 300, 100, 550, 300);
 	window_set_color(main_window, NULL, &light_green);
+    main_window->callback=window_callback;
 
     /**
      * label that show process
@@ -401,6 +455,8 @@ int main(int argc, char* argv[])
 	text_line_set_color(file_context_text_line, &dark_blue, NULL, NULL);
 	text_line_set_multilines(file_context_text_line);
 	fonty = get_font_height(file_context_text_line->gd);
+        fontx = get_font_width(file_context_text_line->gd);
+        lstat(file_name, &file_info);////////////////
 
 	if(file_name)
 	{
@@ -410,7 +466,10 @@ int main(int argc, char* argv[])
 			application_exit();
 			return -1;
 		}
-		s = scroll_bar_init(1, fonty * text_line_get_max_line_shown(file_context_text_line), fonty);
+                 //s = scroll_bar_init(1, fonty * fontx * (file_info.st_size/200), fonty);
+		//s = scroll_bar_init(1, fonty * text_line_get_max_line_shown(file_context_text_line), fonty);
+                  s = scroll_bar_init(1, fonty * (text_line_get_line_total(file_context_text_line)+3), fonty);
+               //si_t text_line_get_line_total(struct text_line* t)
 	}
 	else
 	{

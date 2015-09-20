@@ -51,7 +51,7 @@ button_callback
     {
         case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
             /* 申请窗口 */
-            w = window_init("pop_up_window");
+            w = window_init("son_window");
             /* 申请失败 */
             if(w == NULL)
             {
@@ -61,8 +61,8 @@ button_callback
 			window_set_bounds(w, 100, 100, 300, 100);
 			window_set_color(w, NULL, &barely_blue);
 
-            /* 添加顶层窗口 */
-            application_add_window(global_application.main_window, w);
+            /* 添加子窗口 */
+            application_add_window(NULL, w);
             break;
 
         default:
@@ -73,9 +73,8 @@ button_callback
     return 0;
 }
 
-/*
-    测试 button
-*/
+
+
 int main()
 {
     si_t video_access_mode = VIDEO_ACCESS_MODE_BUFFER;
@@ -87,7 +86,7 @@ int main()
     application_init(video_access_mode, app_type, "pop_up_window");
 
     /* 申请窗口 */
-    w = window_init("pop_up_window");
+    w = window_init("pop_up");
     /* 申请失败 */
     if(w == NULL)
     {
@@ -105,12 +104,11 @@ int main()
         application_exit();
         return -1;
     }
-	button_set_bounds(b, 50, 50, 150, 50);
+	button_set_bounds(b, 50, 50, 100, 50);
 	button_set_color(b, NULL, &barely_blue);
     b->callback = button_callback;
     
-    
-	
+	/* 添加button */   
 	object_attach_child(OBJECT_POINTER(w), OBJECT_POINTER(b));
 
     /* 添加顶层窗口 */

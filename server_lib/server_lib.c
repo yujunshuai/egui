@@ -265,6 +265,7 @@ extern si_t send_app_window_cancel_message(struct egui_uds* uds_ptr, union messa
 	message_set_app_window_cancel(&msg_to_be_sent, window_descripter);
 	return comm_send_message(uds_ptr, &msg_to_be_sent);
 }
+
 extern si_t send_application_quit_message(struct egui_uds* uds_ptr)
 {
 	/**

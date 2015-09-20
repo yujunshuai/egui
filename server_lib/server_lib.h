@@ -320,6 +320,7 @@ extern si_t send_window_cancel_message(struct egui_uds* uds_ptr, union message* 
  * @return 成功返回0，否则返回-1
  **/
 extern si_t send_app_window_cancel_message(struct egui_uds* uds_ptr, union message* msg, si_t window_descripter);
+
 /**
  * 发送应用程序退出消息
  *

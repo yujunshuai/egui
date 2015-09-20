@@ -45,14 +45,14 @@ int main()
     /* 初始化用户应用程序 */
     application_init(video_access_mode, app_type, "single_window");
 
-    w = window_init("single_window");
+    w = window_init("single");
     /* 申请失败 */
     if(w == NULL)
     {
         application_exit();
         return -1;
     }
-	window_set_bounds(w, 300, 500, 450, 200);
+	window_set_bounds(w, 200, 400, 450, 200);
 	
 	
 

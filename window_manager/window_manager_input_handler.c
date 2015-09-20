@@ -827,7 +827,7 @@ si_t window_manager_input_handler(struct egui_uds* uds_ptr, addr_t arg)
 				/* 更新活动窗口 */
 				mask_active_by_mouse_down(message);
 
-				//handle_desktop_press(message);
+				handle_desktop_press(message);
 
 				handle_button_press(message);
 
@@ -847,7 +847,7 @@ si_t window_manager_input_handler(struct egui_uds* uds_ptr, addr_t arg)
 			}
 			else
 			{
-				//handle_desktop_release(message);
+				handle_desktop_release(message);
 
 				handle_button_release(message);
 
@@ -863,9 +863,9 @@ si_t window_manager_input_handler(struct egui_uds* uds_ptr, addr_t arg)
 			if(message->mouse.code == INPUT_CODE_MOUSE_X_OFFSET)
 			{
 				if(message->base.type == MESSAGE_TYPE_MOUSE_MOVE) {
-					global_wm.new_cursor.x =
-						global_wm.new_cursor.x + message->mouse.value;
-				} else {
+					global_wm.new_cursor.x = global_wm.new_cursor.x + message->mouse.value;
+				} 
+				else{
 					global_wm.new_cursor.x =
 						(double)message->mouse.value/MOUSE_RESOLUTION*
 						global_screen.width;
@@ -883,9 +883,9 @@ si_t window_manager_input_handler(struct egui_uds* uds_ptr, addr_t arg)
 			else if(message->mouse.code == INPUT_CODE_MOUSE_Y_OFFSET)
 			{
 				if(message->base.type == MESSAGE_TYPE_MOUSE_MOVE) {
-					global_wm.new_cursor.y =
-						global_wm.new_cursor.y + message->mouse.value;
-				} else {
+					global_wm.new_cursor.y = global_wm.new_cursor.y + message->mouse.value;
+				} 
+				else{
 					global_wm.new_cursor.y =
 						(double)message->mouse.value/MOUSE_RESOLUTION*
 						global_screen.height;

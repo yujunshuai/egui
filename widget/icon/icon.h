@@ -64,13 +64,11 @@ struct icon
     ICON_DEFINITION
 	char img_path[255];
 	char img_normal_path[255]; 
-	char img_select_path[255]; 
+	char img_select_path[255];
 	char  text[255];
 	/* see the enum icon_type */
 	si_t type;
 	si_t is_text_visiable;
-
-	//选中的标识，0为未选中，1为选中
 	si_t flag;
 	
 	struct rectangle text_field;

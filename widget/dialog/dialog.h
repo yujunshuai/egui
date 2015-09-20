@@ -53,82 +53,16 @@ the window-system properties for the widget (in particular it will reset the Qt:
 /**
  * 对话框结构体
 **/
-/*
 # define DIALOG_DEFINITION \
-    WINDOW_DEFINITION\
+    /** 从 window 继承 **/ \
+    WINDOW_DEFINITION \
+    \
+    /** **/ \
     si_t unspec;
-*/
-
-/**
- * 窗口结构体
- *
- * 请注意
- *     请不要赋予宽度成员和高度成员任意的值。
- *     窗口的宽度必须大于等于最小宽度，小于等于最大宽度。
- *     窗口的高度必须大于等于最小高度，小于等于最大高度。
- **/
-# define WINDOW_DEFINITION \
-    /**
-     * 从 widget 继承
-     **/ \
-    WIDGET_DEFINITION \
-    \
-    /**
-     * 窗口描述符，实际上就是window_info结构的指针，
-     * 由服务器端作为register_window的结果返回，
-     * 并在application_add_window()中被填写
-     **/ \
-    si_t descriptor; \
-    \
-    /**
-     * 是否是模态窗口
-     **/ \
-    si_t modal; \
-    \
-    /**
-     * 标题
-     **/ \
-    char * title; \
-    \
-    /**
-     * icon path
-     **/ \
-    char* icon_path; \
-    \
-    /**
-     * 是否可以最大化
-     **/ \
-    si_t maximize_enable; \
-    \
-    /**
-     * 是否可以最小化
-     **/ \
-    si_t minimize_enable; \
-    \
-    /**
-     * 当前是否是全屏
-     **/ \
-    si_t is_full_screen; \
-    \
-    /**
-     * is activated or not
-     **/ \
-    si_t is_activated;  \
-    \
-    /**
-     * status: see __window_status__
-     **/ \
-    si_t status; \
-    \
-    /**
-     * 窗口还原
-     **/ \
-    struct rectangle restore_area;
 
 struct dialog
 {
-    WINDOW_DEFINITION;
-    si_t unspec;
+    DIALOG_DEFINITION
 };
 
 /* dialog样式结构体 */

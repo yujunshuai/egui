@@ -82,7 +82,6 @@ set_window_color
 }
 
 
-
 /**
  * 绘制窗口的边框
  *

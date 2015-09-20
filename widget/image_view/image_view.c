@@ -220,3 +220,27 @@ void image_view_set_color(struct image_view* i, struct color* fcolor, struct col
 	widget_set_color(WIDGET_POINTER(i), fcolor, bcolor);
 }
 
+
+
+
+
+/**
+ * 重绘函数
+ * (供外部调用)
+ **/
+extern void image_view_reshow(struct image_view* i){
+
+	image_view_default_widget_repaint(i, NULL);
+	image_view_default_widget_show(i, NULL);
+
+}
+
+
+
+
+
+
+
+
+
+

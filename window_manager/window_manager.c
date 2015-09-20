@@ -418,15 +418,15 @@ static si_t interface_init()
 	engine_draw_circle(gd,6*global_screen.width/14,9*global_screen.height/16,5);
     screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
 
-	//sleep(1);
+	usleep(500000);
 	engine_draw_circle(gd,7*global_screen.width/14,9*global_screen.height/16,5);
     screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
     
-	//sleep(1);
+	usleep(500000);
 	engine_draw_circle(gd,8*global_screen.width/14,9*global_screen.height/16,5);
     screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
     
-    //sleep(1);
+    usleep(500000);
     //engine_clear(gd);
     
 	pid_t id;
@@ -506,7 +506,7 @@ si_t window_manager_init()
 		return -1;
 	}
 
-	if(0 != event_init(200000))		//双击识别未0.2秒
+	if(0 != event_init(300000))		//双击识别为0.3秒
 	{
 		EGUI_PRINT_ERROR("failed to init event module");
 		return -1;

@@ -72,6 +72,32 @@ my_widget_default_widget_show
     return 0;
 }
 
+si_t get_type(char * str)
+{
+    si_t len=strlen(str);
+    si_t i=len-1;
+    for(;i>0;i--)
+    {
+       if(str[i]=='.')
+         break;
+    }
+    if(i==0)
+    return 0;
+    char key[20] = {'\0'};
+    strncpy(key, str+i+1, len-1-i);
+    if(strcmp(key,"txt")==0)
+    return 1;
+    if(strcmp(key,"h")==0)
+    return 2;
+    if(strcmp(key,"c")==0)
+    return 3;
+    if(strcmp(key,"cpp")==0)
+    return 4;
+    if(strcmp(key,"bmp")==0)
+    return 5;
+    return 0;
+}
+
 si_t
 my_widget_default_widget_repaint
 (struct my_widget * mw,
@@ -170,10 +196,35 @@ my_widget_default_widget_repaint
             set_color(mw->gd,mw->back_color.r,mw->back_color.g, mw->back_color.b,mw->back_color.a);
            if(di_ptr->is_directory == 1)
 	   {
-		draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/dir_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+		draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/direction.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
 	   }
-           else
-             draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/readable_file_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+           else if(di_ptr->is_directory == 2)
+             draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/executable_file_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+           else 
+           {
+               switch(get_type(di_ptr->name))
+               {
+                  case 1:
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/txt.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break;
+                  case 2:
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/txt.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break;
+                  case 3: 
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/c.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break; 
+                  case 4:
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/cpp.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break;  
+                  case 5:
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/bmp.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break;  
+                  default:
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/default_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break;  
+               }
+           }
+            // draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/C2.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
            set_area(mw->gd,area.x,area.y,area.width,area.height);
            set_color(mw->gd,mw->fore_color.r,mw->fore_color.g,mw->fore_color.b, mw->fore_color.a);
              if(strlen(di_ptr->name)>12)
@@ -203,10 +254,36 @@ my_widget_default_widget_repaint
             set_color(mw->gd,mw->back_color.r,mw->back_color.g, mw->back_color.b,mw->back_color.a);
            if(di_ptr->is_directory == 1)
 	   {
-		draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/dir_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+		draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/direction.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
 	   }
-           else
-             draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/readable_file_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+           else if(di_ptr->is_directory == 2)
+             draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/executable_file_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+           else 
+           {
+               switch(get_type(di_ptr->name))
+               {
+                  case 1:
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/txt.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break;
+                  case 2:
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/txt.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break;
+                  case 3: 
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/c.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break; 
+                  case 4:
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/cpp.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break;  
+                  case 5:
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/bmp.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break;  
+                  default:
+                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/default_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+                        break;  
+             
+               }
+           } 
+             //draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/C2.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
            set_area(mw->gd,area.x,area.y,area.width,area.height);
            set_color(mw->gd,mw->fore_color.r,mw->fore_color.g,mw->fore_color.b, mw->fore_color.a);
              if(strlen(di_ptr->name)>12)
@@ -235,8 +312,42 @@ my_widget_default_mouse_press
 (struct my_widget * mw,
  union message * msg)
 {
-    NOT_USED(mw);
-    NOT_USED(msg);
+    struct rectangle area;
+    si_t x, y, x1,y1, index;
+
+    if(msg->mouse.code == INPUT_CODE_MOUSE_L_KEY)
+    {
+        /* 获得左上角的绝对坐标 */
+        widget_absolute_coordinate(WIDGET_POINTER(mw), &x, &y);
+
+        /* 获得绝对的工作区域 */
+        /* 将会舍弃不在父控件内的部分*/
+        application_widget_absolute_area(WIDGET_POINTER(mw), &area);
+
+        /* 双击了那个目录项 */
+        y1 = msg->mouse.cursor_position.y - y;
+        x1 = msg->mouse.cursor_position.x - x;
+        if(x1<110*((x1-30)/110)+30-1||x1>110*((x1-30)/110)+100-1||y1<90*((y1-15)/90)+15+2||y1>90*((y1-15)/90)+78+2)
+           return 0;
+
+        index = (y1-15)/90*num +(x1-30)/110;
+        if(index >= (si_t)vector_size(&file_list))
+           return 0;
+
+        //set_area(mw->gd,x1+110*(i%num)+30,y1+90*(i/num)+15,60,58);
+        set_color(mw->gd, 0, 0, 0, 0);
+        draw_line( mw->gd, x+110*((x1-30)/110)+30-1, y+90*((y1-15)/90)+15+2, x+110*((x1-30)/110)+100-1, y+90*((y1-15)/90)+15+2);
+
+	/* 左边框 */
+        draw_line( mw->gd, x+110*((x1-30)/110)+30-1, y+90*((y1-15)/90)+15+2, x+110*((x1-30)/110)+30-1, y+90*((y1-15)/90)+78+2);
+
+        /* 右边框 */
+        draw_line(mw->gd, x+110*((x1-30)/110)+100-1, y+90*((y1-15)/90)+15+2, x+110*((x1-30)/110)+100-1, y+90*((y1-15)/90)+78+2);
+
+        /* 下边框 */
+        draw_line(mw->gd, x+110*((x1-30)/110)+30-1, y+90*((y1-15)/90)+78+2, x+110*((x1-30)/110)+100-1, y+90*((y1-15)/90)+78+2);
+        
+    }
     return 0;
 }
 
@@ -245,13 +356,43 @@ my_widget_default_mouse_release
 (struct my_widget * mw,
  union message * msg)
 {
-    NOT_USED(mw);
-    NOT_USED(msg);
+    struct rectangle area;
+    si_t x, y, x1,y1, index;
+
+    if(msg->mouse.code == INPUT_CODE_MOUSE_L_KEY)
+    {
+        /* 获得左上角的绝对坐标 */
+        widget_absolute_coordinate(WIDGET_POINTER(mw), &x, &y);
+
+        /* 获得绝对的工作区域 */
+        /* 将会舍弃不在父控件内的部分*/
+        application_widget_absolute_area(WIDGET_POINTER(mw), &area);
+
+        /* 双击了那个目录项 */
+        y1 = msg->mouse.cursor_position.y - y;
+        x1 = msg->mouse.cursor_position.x - x;
+        if(x1<110*((x1-30)/110)+30-1||x1>110*((x1-30)/110)+100-1||y1<90*((y1-15)/90)+15+2||y1>90*((y1-15)/90)+78+2)
+           return 0;
+        index = (y1-15)/90*num +(x1-30)/110;
+        if(index >= (si_t)vector_size(&file_list))
+           return 0;
+        my_widget_repaint(mw);
+        my_widget_show(mw);
+
+    }
     return 0;
 }
 
+//si_t
+//my_widget_default_mouse_double_click
+//(struct my_widget * mw,
+// union message * msg)
+//{
+//   
+//}
+
 si_t
-my_widget_default_mouse_single_click
+my_widget_default_mouse_double_click
 (struct my_widget * mw,
  union message * msg)
 {
@@ -271,6 +412,9 @@ my_widget_default_mouse_single_click
         /* 双击了那个目录项 */
         y1 = msg->mouse.cursor_position.y - y;
         x1 = msg->mouse.cursor_position.x - x;
+   
+         set_color(mw->gd, 255, 255, 255, 0);
+
 
         index = (y1-15)/90*num +(x1-30)/110;
         if(index >= (si_t)vector_size(&file_list))
@@ -322,22 +466,39 @@ my_widget_default_mouse_single_click
         }
         else if(di_ptr->is_directory == 3)
         {
-            char* command[3];
-            char otherapp[PATH_MAX];
-            pid_t pid;
+            pid_t pid; 
+            if(get_type(di_ptr->name)==5)
+           {
+               char file_name[100];
+               si_t item=0;
+               strncpy(file_name,working_directory,100);
+               item=strlen(file_name);
+               file_name[item]='/';
+               file_name[item+1]='\0';
+               strncat(file_name,di_ptr->name+2,100);
+				pid = fork();
+               if(pid == 0)
+              {
+                set_color(mw->gd, 0, 0, 0, 0);
+                execl("/home/wangfei/egui/_bulid/debug/samples/image_view","./image_view",file_name,NULL);
+                //exit(0);
+              }
 
-            strncpy(otherapp, DESKTOP_PATH, PATH_MAX);
-            strncat(otherapp, "editerbasic", PATH_MAX);
-
-            command[0] = otherapp;
-            command[1] = di_ptr->name + 2;
-            command[2] = NULL;
- 
-            if((pid = fork()) == 0)
-            {
-                execv(command[0], command);
-                exit(0);
-            }
+           }
+            
+            else
+           {
+				pid = fork();
+               if(pid == 0)
+              {
+                set_color(mw->gd, 0, 0, 0, 0);
+                //execv(command[0], command);
+                 // execl("/home/wangfei/egui/_build/debug/samples/editerbasic","./editerbasic",NULL);
+                  execl("/home/wangfei/egui/_bulid/debug/samples/editerbasic","./editerbasic",di_ptr->name+2,NULL);
+                  //execl(command[0],command);
+                //exit(0);
+              }
+           } 
         }
     }
 
@@ -365,14 +526,20 @@ my_widget_default_callback
 
         case MESSAGE_TYPE_MOUSE_PRESS:
             my_widget_default_mouse_press(mw, m);
+            my_widget_default_widget_show(mw, m);
             break;
 
         case MESSAGE_TYPE_MOUSE_RELEASE:
             my_widget_default_mouse_release(mw, m);
+            my_widget_default_widget_show(mw, m);
             break;
 
         case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
-            my_widget_default_mouse_single_click(mw, m);
+            //my_widget_default_mouse_single_click(mw, m);
+            break;
+        
+        case MESSAGE_TYPE_MOUSE_DOUBLE_CLICK:
+            my_widget_default_mouse_double_click(mw, m);
             break;
 
         case MESSAGE_TYPE_WINDOW_CLOSE:

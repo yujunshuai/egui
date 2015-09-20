@@ -121,4 +121,15 @@ extern void image_view_set_bounds(struct image_view* i, si_t x, si_t y, si_t wid
  **/
 extern void image_view_set_color(struct image_view* i, struct color* fcolor, struct color* bcolor);
 
+
+
+/**
+ * 重绘函数
+ **/
+extern void image_view_reshow(struct image_view* i);
+
+
+
+
+
 #endif

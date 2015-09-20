@@ -110,10 +110,8 @@ enum __message_type__
 	MESSAGE_TYPE_WINDOW_REGISTER,
 	/* 取消窗口：仅适用于桌面 **/
 	MESSAGE_TYPE_WINDOW_CANCEL,
-	
 	/** 在桌面注销APP窗口相关 **/
     MESSAGE_TYPE_APP_WINDOW_CANCEL,
-
 	/* 程序退出 */
 	MESSAGE_TYPE_APPLICATION_QUIT,
 
@@ -714,7 +712,6 @@ struct message_app_window_cancel
 };
 
 extern void message_set_app_window_cancel(union message* m, si_t w);
-
 
 union message
 {

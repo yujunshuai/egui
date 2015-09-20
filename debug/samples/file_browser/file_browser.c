@@ -38,6 +38,7 @@
 # include "my_widget.h"
 # include "directory_item.h"
 # include "directory_content.h"
+# include "client_lib.h"
 
 
 /* 工作目录 */
@@ -60,6 +61,9 @@ struct my_widget * mw;
 /* scroll bar for my widget */
 struct scroll_bar* s;
 
+si_t width_screen=0;
+si_t height_screen=0;
+
 //si_t num_1=4;
 
 si_t window_callback(addr_t w, addr_t m)
@@ -74,12 +78,14 @@ si_t window_callback(addr_t w, addr_t m)
         /*
             printf("MESSAGE_TYPE_WINDOW_MAXIMIZE\n");
         */
-            label_set_bounds(l, 105, 6, 1200, 26);
-            scroll_bar_set_bounds(s, 1330, 43, 20, 680);
+            height_screen=self->area.height;
+            width_screen=self->area.width;
+            label_set_bounds(l, 105, 6, width_screen-200, 26);
+            scroll_bar_set_bounds(s, width_screen-36, 43, 20, height_screen-90);//1366 768
             button_set_bounds(b1, 10, 6, 90, 26);
             mw->area.x = 10;
-            mw->area.width = 1310;
-            mw->area.height = 680;
+            mw->area.width = width_screen-60;
+            mw->area.height = height_screen-80;
             num=11;
             mw->count=77;
             mw->start = 0;
@@ -100,7 +106,7 @@ si_t window_callback(addr_t w, addr_t m)
             printf("MESSAGE_TYPE_WIDGET_RESIZE\n");
         */
             label_set_bounds(l, 100, 6, 400, 26);
-            scroll_bar_set_bounds(s, 475, 43, 20, 384);
+            scroll_bar_set_bounds(s, 475, 43, 20, 374);
             button_set_bounds(b1, 5, 6, 90, 26);
             mw->area.x = 5;
             mw->area.width = 465;
@@ -304,7 +310,8 @@ int main(int argc, char* argv[])
     si_t video_access_mode = VIDEO_ACCESS_MODE_BUFFER;
 	si_t app_type = APPLICATION_TYPE_NORMAL;
     int font = 0;
-
+    //height_screen=get_screen_height();//1300;
+    //width_screen=get_screen_width();//700;
     /* 初始化用户应用程序 */
     application_init(video_access_mode, app_type, "file_browser");
 
@@ -335,7 +342,7 @@ int main(int argc, char* argv[])
     directory_content(working_directory, &file_list);
 
     /* 申请窗口 */
-    w = window_init("file_browser");
+    w = window_init("file");
     /* 申请失败 */
     if(w == NULL)
     {
@@ -399,7 +406,7 @@ int main(int argc, char* argv[])
         application_exit();
         return -1;
     }
-	scroll_bar_set_bounds(s, 475, 43, 20, 384);
+	scroll_bar_set_bounds(s, 475, 43, 20, 374);
 
 #if 0 /** commented by padme 2012-05-31 {{{ **/
     set_font(mw->gd, mw->font);

@@ -43,7 +43,7 @@
 
 # include "directory_item.h"
 # include "directory_content.h"
-
+# include "log.h"
 
 
 /**
@@ -89,9 +89,7 @@ directory_content
 
     if(dir_ptr == NULL)
     {
-        printf("ERROR AT LINE %d OF FILE %s\n", __LINE__, __FILE__);
-        perror("opendir");
-
+		EGUI_PRINT_SYS_ERROR("failed to open dir %s: opendir", path);
         return -1;
     }
 
@@ -104,9 +102,7 @@ directory_content
         /* 获得文件信息 */
         if(lstat(dirent_ptr->d_name, &file_info) < 0)
         {
-            printf("ERROR AT LINE %d OF FILE %s\n", __LINE__, __FILE__);
-            perror("lstat");
-
+			EGUI_PRINT_SYS_ERROR("failed to gain file %s stat: lstat", dirent_ptr->d_name);
             return -1;
         }
 
@@ -145,7 +141,6 @@ directory_content
     quick_sort(v);
 
     closedir(dir_ptr);
-
 
     return 0;
 }

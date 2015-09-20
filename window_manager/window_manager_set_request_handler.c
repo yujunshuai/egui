@@ -252,8 +252,8 @@ static si_t desktop_dirty_handler(addr_t app_ptr)
 	 **/
 	if(APPLICATION_TYPE_DESKTOP == app_info_ptr->application_type)
 	{
+		screen_flush(0, 0, global_screen.width, global_screen.height);
 		return flush_in_z_order(0, 0, global_screen.width, global_screen.height);
-        screen_flush(0, 0, global_screen.width, global_screen.height);
 	}
 	return -1;
 }
@@ -430,12 +430,13 @@ static si_t register_window_handler(addr_t app_ptr, si_t parent_descripter, char
 
 		/* 将窗口的信息添加到向量 */
 		vector_push_back(&(app_info_ptr->window_info_vector), &root, sizeof(struct object));
-		win_info_ptr->parent = vector_back(&(app_info_ptr->window_info_vector));
+		win_info_ptr->parent = vector_back(&(app_info_ptr->window_info_vector));	//9/14改
 		//
 		if(NULL != global_wm.desktop_app_ptr && app_info_ptr != global_wm.desktop_app_ptr) 
 		{
 			send_window_register_message(&global_wm.desktop_app_ptr->uds, NULL, (si_t)win_info_ptr, win_info_ptr->title);
 		}
+		win_info_ptr->parent = vector_back(&(app_info_ptr->window_info_vector));
 	}
 	/**
 	 * 否则：直接添加子窗口
@@ -526,17 +527,8 @@ static si_t cancel_window_handler(addr_t app_ptr, si_t window_descripter)
 	//if((si_t)global_wm.active_win_info_ptr == window_descripter || global_wm.active_app_info_ptr == app_info_ptr)
 	{
 		global_wm.active_win_info_ptr = NULL;
-		global_wm.active_win_info_ptr = NULL;
-		/*
-		struct application_info * app_ptr = global_wm.desktop_app_ptr;//change
-		struct window_info * win_ptr = vector_front( &(global_wm.desktop_app_ptr->window_info_vector) );//change
-		send_window_activate_message(&app_ptr->uds, NULL, (si_t)win_ptr);
-		
-		global_wm.active_win_info_ptr = global_wm.desktop_app_ptr;
-		global_wm.active_win_info_ptr = win_ptr;		
-		win_ptr = vector_end( &(global_wm.desktop_app_ptr->window_info_vector) );//change
-		send_window_activate_message(&app_ptr->uds, NULL, (si_t)win_ptr);
-		*/
+		global_wm.active_app_info_ptr = NULL;
+
 		window_info_iterator_clear(&iter);
 		if(all_app_traversal_decrement(&iter, _do_update_last_window, NULL))
 		{

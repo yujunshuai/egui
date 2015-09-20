@@ -30,10 +30,14 @@
 # include <stdio.h>
 # include <string.h>
 # include <unistd.h>
-//# include "../graph/debug_graph_engine.c"
+
 # include "application.h"
 # include "widget.h"
+
 #define N 16
+struct color backgroud_col = {0xB7, 0xf0, 0xF7, 0};
+struct color normal_col = {0x3E, 0x8B, 0xEF, 0};
+struct color select_col = {0x5C, 0x3D, 0xAF, 0};
 struct button *bb[N];
 struct color col[2];
 int bbc[N]={0};
@@ -61,53 +65,50 @@ int end(){
 //callback函数
 si_t
 button_callback
-(
-void * btn,
- void * msg)
+(void * btn,void * msg)
 {
-		struct button * b = btn;
-		struct button * b1 = btn;
-		int n=b->fore_color.r;
-	    if(message_get_type(msg)==MESSAGE_TYPE_MOUSE_SINGLE_CLICK){
-			switch(n){
-				case 5:case 6:case 9:case 10:
-					bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;		
-					bbc[n-4]=(bbc[n-4]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;
-				case 0: bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;
-				case 3: bbc[n]=(bbc[n]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;
-				case 12: bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n-4]=(bbc[n-4]+1)%2;break;
-				case 15: bbc[n]=(bbc[n]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;bbc[n-4]=(bbc[n-4]+1)%2;break;
-				case 1:case 2:
-					bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;	
-				case 4:case 8:
-					bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n-4]=(bbc[n-4]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;
-				case 7:case 11:
-					bbc[n]=(bbc[n]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;bbc[n-4]=(bbc[n-4]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;
-				case 13:case 14:
-					bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;bbc[n-4]=(bbc[n-4]+1)%2;break;				
-			}
-			set_allcolor();
-			if(end()){
-				struct window * ww;
-		        /* 申请窗口 */
-		        ww = window_init("You win!");
-		        /* 申请失败 */
-		        if(ww == NULL)
-		        {
-		            application_exit();
-		            return -1;
-		        }
-				window_set_bounds(ww, 350, 250, 300, 100);
-				window_set_color(ww, NULL, &col[0]);
-
-		        /* 添加顶层窗口 */
-		        application_add_window(NULL, ww);
-				sleep(2);
-				application_exit();	
-			}
+	struct button * b = btn;
+	struct button * b1 = btn;
+	int n=b->fore_color.r;
+	if(message_get_type(msg)==MESSAGE_TYPE_MOUSE_SINGLE_CLICK){
+		switch(n){
+			case 5:case 6:case 9:case 10:
+				bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;		
+				bbc[n-4]=(bbc[n-4]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;
+			case 0: bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;
+			case 3: bbc[n]=(bbc[n]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;
+			case 12: bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n-4]=(bbc[n-4]+1)%2;break;
+			case 15: bbc[n]=(bbc[n]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;bbc[n-4]=(bbc[n-4]+1)%2;break;
+			case 1:case 2:
+				bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;	
+			case 4:case 8:
+				bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n-4]=(bbc[n-4]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;
+			case 7:case 11:
+				bbc[n]=(bbc[n]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;bbc[n-4]=(bbc[n-4]+1)%2;bbc[n+4]=(bbc[n+4]+1)%2;break;
+			case 13:case 14:
+				bbc[n]=(bbc[n]+1)%2;bbc[n+1]=(bbc[n+1]+1)%2;bbc[n-1]=(bbc[n-1]+1)%2;bbc[n-4]=(bbc[n-4]+1)%2;break;				
 		}
-		else
-			button_default_callback(b, msg);
+		set_allcolor();
+		if(end()){
+			struct window * ww;
+		    /* 申请窗口 */
+		    ww = window_init("You win!");
+		    /* 申请失败 */
+		    if(ww == NULL)
+	        {
+	  	      application_exit();
+		      return -1;
+		    }
+			window_set_bounds(ww, 200, 100, 250, 100);
+			window_set_color(ww, NULL, &col[0]);
+
+		    /* 添加子窗口 */
+            application_add_window(NULL, ww);
+		}
+	}
+
+	else
+		button_default_callback(b, msg);
 }
 
 
@@ -117,15 +118,9 @@ int main()
 	int k;
     si_t video_access_mode = VIDEO_ACCESS_MODE_BUFFER;
 	si_t app_type = APPLICATION_TYPE_NORMAL;
-col[0].r=0;
-col[0].g=255;
-col[0].b=0;
-col[0].a=0;
-col[1].r=100;
-col[1].g=100;
-col[1].b=100;
-col[1].a=0;
- struct window * w;
+	col[0] = normal_col;
+	col[1] = select_col;
+ 	struct window * w;
 
     /* 初始化用户应用程序 */
     application_init(video_access_mode, app_type, "game");
@@ -138,11 +133,9 @@ col[1].a=0;
         application_exit();
         return -1;
     }
-	window_set_bounds(w, 300, 100, 500, 500);
-    w->back_color.r = 255;
-    w->back_color.g = 0;
-    w->back_color.b = 255;
-    w->back_color.a = 0;
+	window_set_bounds(w, 200, 100, 300, 300);
+	window_set_color(w, NULL, &backgroud_col);
+    
 
 	for(j=0;j<N;j++){
     	bb[j]= button_init("");
@@ -152,17 +145,15 @@ col[1].a=0;
         	application_exit();
         	return -1;
     	}
-		button_set_bounds(bb[j], (j%4)*125, (j/4)*125, 123, 123);
+		button_set_bounds(bb[j], (j%4)*75, (j/4)*75, 73, 73);
+		button_set_color(bb[j], NULL, &normal_col);
 		bb[j]->fore_color.r=j;
-		//button_set_font(bb[j], FONT_MATRIX_16);
     	bb[j]->callback = button_callback;
 	}
 
 	for(j=0;j<N;j++)
 		object_attach_child(OBJECT_POINTER(w), OBJECT_POINTER(bb[j]));
 	
-
-
 
     /* 添加顶层窗口 */
     application_add_window(NULL, w);

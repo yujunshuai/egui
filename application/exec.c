@@ -630,8 +630,8 @@ handle_window_cancel
     /* 如果要关闭主窗口 */
     if(global_application.main_window == WINDOW_POINTER(w))
     {
-        cancel_window(WINDOW_POINTER(w)->descriptor);//change
-        application_del_window(WINDOW_POINTER(w));
+         cancel_window(WINDOW_POINTER(w)->descriptor);//change
+         application_del_window(WINDOW_POINTER(w));
     }
     else
     {
@@ -740,6 +740,7 @@ static void application_handle_message(union message* msg)
     case MESSAGE_TYPE_WINDOW_CANCEL:
         handle_window_cancel(msg);
         break;
+
     default:
         application_widgets_for_each_increament(do_find_window, msg);
         break;
