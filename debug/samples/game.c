@@ -103,7 +103,7 @@ button_callback
 			window_set_color(ww, NULL, &col[0]);
 
 		    /* 添加子窗口 */
-            application_add_window(NULL, ww);
+            application_add_window(global_application.main_window, ww);
 		}
 	}
 

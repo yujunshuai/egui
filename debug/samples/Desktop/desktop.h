@@ -37,6 +37,8 @@
 # include "color_base.h"
 # include "taskbar.h"
 extern si_t bar_num;
+extern si_t screen_w;
+extern si_t screen_h;
 extern struct window_style desktop_default_style;
 
 /**

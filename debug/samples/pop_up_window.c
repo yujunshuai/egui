@@ -62,7 +62,7 @@ button_callback
 			window_set_color(w, NULL, &barely_blue);
 
             /* 添加子窗口 */
-            application_add_window(NULL, w);
+            application_add_window(global_application.main_window, w);
             break;
 
         default:

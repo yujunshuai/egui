@@ -47,7 +47,9 @@
 
 static struct color barely_blue = {0xcb, 0xf3, 0xfb, 0};
 static struct color light_blue = {0x46, 0xa5, 0xe5, 0};
+static struct color white={0xff,0xff,0xff,0};
 si_t num =4;
+si_t icon_flag=1;
 si_t
 my_widget_default_widget_show
 (struct my_widget * mw,
@@ -97,6 +99,96 @@ si_t get_type(char * str)
     return 5;
     return 0;
 }
+
+void get_icon_dir_path(char * icon_path)
+{
+   if(icon_flag)
+   strcpy(icon_path,"/home/wangfei/egui/resource/icons/file_icon/");
+   else
+   strcpy(icon_path,"/home/wangfei/egui/resource/icons/file_icon2/");
+}
+
+si_t fill_icon(struct my_widget * mw,struct directory_item * di_ptr)
+{
+   char icon_path[200];
+   get_icon_dir_path(icon_path);
+   if(di_ptr->is_directory == 1)
+   { 
+      strcat(icon_path,"dir2_1.bmp");              
+   }
+   else if(di_ptr->is_directory == 2)
+   {
+      strcat(icon_path,"ex_1.bmp"); 
+   }
+   else 
+   {
+      switch(get_type(di_ptr->name))
+      {
+          case 1:
+                 strcat(icon_path,"txt_1.bmp");  
+                 break;
+          case 2:
+                 strcat(icon_path,"h_1.bmp");  
+                 break;
+          case 3: 
+                 strcat(icon_path,"c_1.bmp");  
+                 break; 
+          case 4:
+                 strcat(icon_path,"cpp_1.bmp");  
+                 break;
+          case 5:
+                 strcat(icon_path,"bmp_1.bmp");  
+                 break; 
+          default:
+                 strcat(icon_path,"unknow_1.bmp");  
+                 break;  
+       }
+    }
+   draw_img(mw->gd,icon_path, ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+   return 0;
+
+}
+
+si_t fill_icon_2(struct my_widget * mw,struct directory_item * di_ptr)
+{
+   char icon_path[200];
+   get_icon_dir_path(icon_path);
+   if(di_ptr->is_directory == 1)
+   { 
+      strcat(icon_path,"dir2_2.bmp");              
+   }
+   else if(di_ptr->is_directory == 2)
+   {
+      strcat(icon_path,"ex_2.bmp"); 
+   }
+   else 
+   {
+      switch(get_type(di_ptr->name))
+      {
+          case 1:
+                 strcat(icon_path,"txt_2.bmp");  
+                 break;
+          case 2:
+                 strcat(icon_path,"h_2.bmp");  
+                 break;
+          case 3: 
+                 strcat(icon_path,"c_2.bmp");  
+                 break; 
+          case 4:
+                 strcat(icon_path,"cpp_2.bmp");  
+                 break;
+          case 5:
+                 strcat(icon_path,"bmp_2.bmp");  
+                 break; 
+          default:
+                 strcat(icon_path,"unknow_2.bmp");  
+                 break;  
+               }
+           }
+   draw_img(mw->gd,icon_path, ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+   return 0;
+}
+
 
 si_t
 my_widget_default_widget_repaint
@@ -179,52 +271,23 @@ my_widget_default_widget_repaint
 
     n = (si_t)vector_size(&file_list);
 
-    x1 = x + mw->border_size;
-    y1 = y + mw->border_size;
+    x1 = x ;
+    y1 = y ;
     char file_name[15]="";
     /* 目录项开始的索引 */
         temp = mw->start;
-    /* 目录项的数目大于能显示的数目 */
     if(n -temp> mw->count)
-    {
-        
-        for(i = 0; i < mw->count; ++ i)
+    n=mw->count;
+    else
+    n=n -temp;
+    for(i = 0; i <n; ++ i)
         {
             memset(file_name,0,sizeof(file_name));
             di_ptr = vector_at(&file_list, temp ++);
             set_area(mw->gd,x1+110*(i%num)+30,y1+90*(i/num)+15,60,58);
             set_color(mw->gd,mw->back_color.r,mw->back_color.g, mw->back_color.b,mw->back_color.a);
-           if(di_ptr->is_directory == 1)
-	   {
-		draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/direction.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-	   }
-           else if(di_ptr->is_directory == 2)
-             draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/executable_file_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-           else 
-           {
-               switch(get_type(di_ptr->name))
-               {
-                  case 1:
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/txt.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break;
-                  case 2:
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/txt.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break;
-                  case 3: 
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/c.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break; 
-                  case 4:
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/cpp.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break;  
-                  case 5:
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/bmp.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break;  
-                  default:
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/default_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break;  
-               }
-           }
-            // draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/C2.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+            fill_icon(mw,di_ptr);
+
            set_area(mw->gd,area.x,area.y,area.width,area.height);
            set_color(mw->gd,mw->fore_color.r,mw->fore_color.g,mw->fore_color.b, mw->fore_color.a);
              if(strlen(di_ptr->name)>12)
@@ -240,8 +303,34 @@ my_widget_default_widget_repaint
              y1+90*(i/num)+60+12,
              file_name,
              strlen(file_name));
+        }
+    /* 目录项的数目大于能显示的数目 *//*
+    if(n -temp> mw->count)
+    {
+        
+        for(i = 0; i < mw->count; ++ i)
+        {
+            memset(file_name,0,sizeof(file_name));
+            di_ptr = vector_at(&file_list, temp ++);
+            set_area(mw->gd,x1+110*(i%num)+30,y1+90*(i/num)+15,60,58);
+            set_color(mw->gd,mw->back_color.r,mw->back_color.g, mw->back_color.b,mw->back_color.a);
+            fill_icon(mw,di_ptr);
 
-            //y1 += font_height;
+           set_area(mw->gd,area.x,area.y,area.width,area.height);
+           set_color(mw->gd,mw->fore_color.r,mw->fore_color.g,mw->fore_color.b, mw->fore_color.a);
+             if(strlen(di_ptr->name)>12)
+             {
+               strncpy(file_name, di_ptr->name+2, 9);
+               strncpy(file_name+9, "...", 3);
+             }
+             else
+                strcpy(file_name, di_ptr->name+2);  
+            show_text
+            (mw->gd,
+             x1+110*(i%num)+30-(strlen(file_name) - 7)*4,
+             y1+90*(i/num)+60+12,
+             file_name,
+             strlen(file_name));
         }
     }
     else
@@ -252,38 +341,9 @@ my_widget_default_widget_repaint
             di_ptr = vector_at(&file_list, temp+i);
             set_area(mw->gd,x1+110*(i%num)+30,y1+90*(i/num)+15,60,58);
             set_color(mw->gd,mw->back_color.r,mw->back_color.g, mw->back_color.b,mw->back_color.a);
-           if(di_ptr->is_directory == 1)
-	   {
-		draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/direction.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-	   }
-           else if(di_ptr->is_directory == 2)
-             draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/executable_file_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-           else 
-           {
-               switch(get_type(di_ptr->name))
-               {
-                  case 1:
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/txt.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break;
-                  case 2:
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/txt.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break;
-                  case 3: 
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/c.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break; 
-                  case 4:
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/cpp.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break;  
-                  case 5:
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/bmp.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break;  
-                  default:
-                        draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/default_small.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
-                        break;  
-             
-               }
-           } 
-             //draw_img(mw->gd, "/home/wangfei/egui/resource/icons/desktop/C2.bmp", ALIGN_HORIZONTAL_TYPE_CENTER | ALIGN_VERTICAL_TYPE_CENTER );
+           fill_icon(mw,di_ptr);
+
+
            set_area(mw->gd,area.x,area.y,area.width,area.height);
            set_color(mw->gd,mw->fore_color.r,mw->fore_color.g,mw->fore_color.b, mw->fore_color.a);
              if(strlen(di_ptr->name)>12)
@@ -300,10 +360,9 @@ my_widget_default_widget_repaint
              file_name,
              strlen(file_name));
 
-            //y1 += font_height;
         }
     }
-
+*/
     return 0;
 }
 
@@ -314,6 +373,7 @@ my_widget_default_mouse_press
 {
     struct rectangle area;
     si_t x, y, x1,y1, index;
+    struct directory_item * di_ptr;
 
     if(msg->mouse.code == INPUT_CODE_MOUSE_L_KEY)
     {
@@ -324,6 +384,9 @@ my_widget_default_mouse_press
         /* 将会舍弃不在父控件内的部分*/
         application_widget_absolute_area(WIDGET_POINTER(mw), &area);
 
+        my_widget_repaint(mw);
+        my_widget_show(mw);
+        
         /* 双击了那个目录项 */
         y1 = msg->mouse.cursor_position.y - y;
         x1 = msg->mouse.cursor_position.x - x;
@@ -333,20 +396,10 @@ my_widget_default_mouse_press
         index = (y1-15)/90*num +(x1-30)/110;
         if(index >= (si_t)vector_size(&file_list))
            return 0;
-
-        //set_area(mw->gd,x1+110*(i%num)+30,y1+90*(i/num)+15,60,58);
-        set_color(mw->gd, 0, 0, 0, 0);
-        draw_line( mw->gd, x+110*((x1-30)/110)+30-1, y+90*((y1-15)/90)+15+2, x+110*((x1-30)/110)+100-1, y+90*((y1-15)/90)+15+2);
-
-	/* 左边框 */
-        draw_line( mw->gd, x+110*((x1-30)/110)+30-1, y+90*((y1-15)/90)+15+2, x+110*((x1-30)/110)+30-1, y+90*((y1-15)/90)+78+2);
-
-        /* 右边框 */
-        draw_line(mw->gd, x+110*((x1-30)/110)+100-1, y+90*((y1-15)/90)+15+2, x+110*((x1-30)/110)+100-1, y+90*((y1-15)/90)+78+2);
-
-        /* 下边框 */
-        draw_line(mw->gd, x+110*((x1-30)/110)+30-1, y+90*((y1-15)/90)+78+2, x+110*((x1-30)/110)+100-1, y+90*((y1-15)/90)+78+2);
-        
+         di_ptr = vector_at(&file_list, index + mw->start);
+         set_area(mw->gd,x+5+110*(index%num)+30,y+5+90*(index/num)+15,60,60);
+         set_color(mw->gd,mw->back_color.r,mw->back_color.g, mw->back_color.b,mw->back_color.a);
+         fill_icon_2(mw,di_ptr);       
     }
     return 0;
 }
@@ -376,20 +429,9 @@ my_widget_default_mouse_release
         index = (y1-15)/90*num +(x1-30)/110;
         if(index >= (si_t)vector_size(&file_list))
            return 0;
-        my_widget_repaint(mw);
-        my_widget_show(mw);
-
     }
     return 0;
 }
-
-//si_t
-//my_widget_default_mouse_double_click
-//(struct my_widget * mw,
-// union message * msg)
-//{
-//   
-//}
 
 si_t
 my_widget_default_mouse_double_click
@@ -476,27 +518,25 @@ my_widget_default_mouse_double_click
                file_name[item]='/';
                file_name[item+1]='\0';
                strncat(file_name,di_ptr->name+2,100);
-				pid = fork();
-               if(pid == 0)
+               if((pid = fork()) == 0)
               {
                 set_color(mw->gd, 0, 0, 0, 0);
                 execl("/home/wangfei/egui/_bulid/debug/samples/image_view","./image_view",file_name,NULL);
-                //exit(0);
+                exit(0);
               }
 
            }
             
             else
            {
-				pid = fork();
-               if(pid == 0)
+               if((pid = fork()) == 0)
               {
                 set_color(mw->gd, 0, 0, 0, 0);
                 //execv(command[0], command);
                  // execl("/home/wangfei/egui/_build/debug/samples/editerbasic","./editerbasic",NULL);
                   execl("/home/wangfei/egui/_bulid/debug/samples/editerbasic","./editerbasic",di_ptr->name+2,NULL);
                   //execl(command[0],command);
-                //exit(0);
+                exit(0);
               }
            } 
         }
@@ -657,13 +697,15 @@ my_widget_init
     /* 默认是否是窗口 */
     addr->is_window = 0;
 
-    addr->back_color = barely_blue;
+    //addr->back_color = barely_blue;
     addr->frame_color = light_blue;
-
+    addr->back_color = white;
     addr->font = FONT_MATRIX_08;
 
     /* 默认的回调函数 */
     addr->callback = my_widget_default_callback;
+   
+    icon_flag=0;
 
     return addr;
 }

@@ -58,8 +58,8 @@ comp
 {
     return
     strcmp
-    (((struct directory_item *)(((struct vector_node *)a)->data))->name + 2,
-     ((struct directory_item *)(((struct vector_node *)z)->data))->name + 2);
+    (((struct directory_item *)(((struct vector_node *)a)->data))->name ,
+     ((struct directory_item *)(((struct vector_node *)z)->data))->name );
 }
 
 /**

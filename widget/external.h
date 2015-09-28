@@ -52,6 +52,7 @@
 #include "tab/tab.h"
 #include "tab/tab_page.h"
 #include "tab/tab_header.h"
+#include "shortcut/shortcut.h"
 
 #if 0
 

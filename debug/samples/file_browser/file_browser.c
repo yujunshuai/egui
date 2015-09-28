@@ -50,10 +50,12 @@ static struct color barely_blue = {0xcb, 0xf3, 0xfb, 0};
 static struct color light_blue = {0x46, 0xa5, 0xe5, 0};
 static struct color dark_blue = {0x18, 0x29, 0x45, 0};
 static struct color light_green = {0xcc, 0xff, 0x99, 0};
+static struct color white={0xff,0xff,0xff,0};
 
 struct window * w;
 /* b1 表示返回上级目录，b2 表示向上，b3 表示向下 */
 struct button * b1;
+struct button * b2;
 /* 显示路径 */
 struct label * l;
 /* 显示目录项的控件 */
@@ -83,6 +85,7 @@ si_t window_callback(addr_t w, addr_t m)
             label_set_bounds(l, 105, 6, width_screen-200, 26);
             scroll_bar_set_bounds(s, width_screen-36, 43, 20, height_screen-90);//1366 768
             button_set_bounds(b1, 10, 6, 90, 26);
+            button_set_bounds(b2, width_screen-45, 10, 20, 20);
             mw->area.x = 10;
             mw->area.width = width_screen-60;
             mw->area.height = height_screen-80;
@@ -91,23 +94,15 @@ si_t window_callback(addr_t w, addr_t m)
             mw->start = 0;
             scroll_bar_set_view(s, 90 * ((vector_size(&file_list)-1)/num+2), 0);
             scroll_bar_update_offset(s, 0);
-            //scroll_bar_repaint(s);
-            //scroll_bar_show(s);
-            //my_widget_repaint(mw);
-            //my_widget_show(mw);
-
-           // label_repaint(l);
-            //label_show(l);
-            
-            //window_default_window_maximize(self, msg);
             break;
         case MESSAGE_TYPE_WINDOW_RESTORE:
         /*
             printf("MESSAGE_TYPE_WIDGET_RESIZE\n");
         */
-            label_set_bounds(l, 100, 6, 400, 26);
+            label_set_bounds(l, 100, 6, 370, 26);
             scroll_bar_set_bounds(s, 475, 43, 20, 374);
             button_set_bounds(b1, 5, 6, 90, 26);
+            button_set_bounds(b2, 472, 10, 20, 20);
             mw->area.x = 5;
             mw->area.width = 465;
             mw->area.height = 384;
@@ -242,7 +237,7 @@ button1_callback
     return 0;
 }
 
-#if 0 /* {{{ */
+
 si_t
 button2_callback
 (void * btn,
@@ -253,14 +248,9 @@ button2_callback
     switch(m->base.type)
     {
         case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
-            if(mw->start > 0)
-            {
-                -- (mw->start);
-
-                my_widget_repaint(mw);
-                my_widget_show(mw);
-            }
-
+            icon_flag=1-icon_flag;
+            my_widget_repaint(mw);
+            my_widget_show(mw);
             break;
 
         default:
@@ -272,6 +262,7 @@ button2_callback
     return 0;
 }
 
+#if 0 /* {{{ */
 si_t
 button3_callback
 (void * btn,
@@ -310,8 +301,6 @@ int main(int argc, char* argv[])
     si_t video_access_mode = VIDEO_ACCESS_MODE_BUFFER;
 	si_t app_type = APPLICATION_TYPE_NORMAL;
     int font = 0;
-    //height_screen=get_screen_height();//1300;
-    //width_screen=get_screen_width();//700;
     /* 初始化用户应用程序 */
     application_init(video_access_mode, app_type, "file_browser");
 
@@ -342,7 +331,7 @@ int main(int argc, char* argv[])
     directory_content(working_directory, &file_list);
 
     /* 申请窗口 */
-    w = window_init("file");
+    w = window_init("file_browser");
     /* 申请失败 */
     if(w == NULL)
     {
@@ -365,7 +354,20 @@ int main(int argc, char* argv[])
 	button_set_font(b1, FONT_MATRIX_12);
 	button_set_color(b1, &light_blue, &barely_blue);
     b1->callback = button1_callback;
-
+    
+    /* 申请按钮 */
+    b2 = button_init("I");
+    /* 申请失败 */
+    if(b2 == NULL)
+    {
+        application_exit();
+        return -1;
+    }
+	button_set_bounds(b2, 472, 10, 18, 20);
+	button_set_font(b2, FONT_MATRIX_12);
+	button_set_color(b2, &barely_blue,&white);
+    b2->callback = button2_callback;
+    
     /* 申请标签 */
     l = label_init(working_directory);
     /* 申请失败 */
@@ -374,7 +376,7 @@ int main(int argc, char* argv[])
         application_exit();
         return -1;
     }
-	label_set_bounds(l, 100, 6, 400, 26);
+	label_set_bounds(l, 100, 6, 370, 26);
 	label_set_color(l, NULL, &light_green);
 	label_set_font(l, FONT_MATRIX_12);
     l->callback = label_default_callback;
@@ -420,8 +422,8 @@ int main(int argc, char* argv[])
 
     /* 将两个按钮添加到窗口 */
     object_attach_child(OBJECT_POINTER(w), OBJECT_POINTER(b1));
-#if 0 /* {{{ */
     object_attach_child(OBJECT_POINTER(w), OBJECT_POINTER(b2));
+#if 0 /* {{{ */
     object_attach_child(OBJECT_POINTER(w), OBJECT_POINTER(b3));
 #endif /* }}} */
     /* 将标签添加到按钮 */

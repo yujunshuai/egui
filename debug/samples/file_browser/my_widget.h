@@ -45,6 +45,7 @@ extern struct label * l;
 
 extern struct scroll_bar* s;
 extern si_t num ;
+extern si_t icon_flag;
 
 struct my_widget
 {

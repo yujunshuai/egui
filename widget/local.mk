@@ -18,7 +18,8 @@ library_libwidget_la_SOURCES = %D%/widget/widget.c\
 					   %D%/flowbox/flowbox.c\
 					   %D%/tab/tab.c\
 					   %D%/tab/tab_page.c\
-					   %D%/tab/tab_header.c
+					   %D%/tab/tab_header.c\
+					   %D%/shortcut/shortcut.c
 
 noinst_HEADERS += %D%/window/paint_window_decoration.h
 
@@ -40,7 +41,8 @@ nobase_pkginclude_HEADERS += %D%/widget/widget.h\
 							 %D%/tab/tab.h\
 							 %D%/tab/tab_page.h\
 							 %D%/tab/tab_header.h\
-							 %D%/external.h
+							 %D%/external.h\
+							 %D%/shortcut/shortcut.h
 
 library_libwidget_la_LIBADD = library/libapplication.la library/libclient_lib.la library/libgeometry.la library/libcomm.la \
 					  library/libconfig_parser.la library/libdata_structures.la \

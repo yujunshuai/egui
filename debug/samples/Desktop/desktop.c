@@ -215,59 +215,50 @@ static si_t desktop_default_widget_show(struct window * w, union message * msg)/
 
 static si_t desktop_default_widget_repaint(struct window * w, union message * msg)
 {
-
-
-        /* 设置图形设备的工作区域 */
-		/*
-        set_area
-            (w->gd,
-             real_area.x,
-             real_area.y,
-             real_area.width,
-             real_area.height);
-		*/
-        /* 使用背景色 */
-		/*
-        set_color
-            (w->gd,
-             w->back_color.r,
-             w->back_color.g,
-             w->back_color.b,
-             w->back_color.a);
-
-        fill_rectangle
-            (w->gd,
-             real_area.x,
-             real_area.y,
-             real_area.width,
-             real_area.height);
-		*/
-        /* 绘制装饰性的部分 */
-        //paint_desktop_decoration(w);
-
 		set_desktop_color(w, &ground_purple);
-    	fill_rectangle(w->gd, 0, 0, w->area.width, 30);
+    	fill_rectangle(w->gd, 0, screen_h-30, w->area.width, 30);
 
     	/* 字体 */
     	set_desktop_color(w, &font_white);
     	set_font(w->gd, FONT_MATRIX_12);
     	/* 标题 */
-    	show_text(w->gd, 15, 3 , w->title, strlen(w->title));
+    	show_text(w->gd, 15, 3+screen_h-30, w->title, strlen(w->title));
 		
 		for(int i=0;i<bar_num;i++){
 			set_desktop_color(w,&bar_blue);
-        	fill_rectangle(w->gd,(i+1)*80,1,79,28);
+        	fill_rectangle(w->gd,(i+1)*80,1+screen_h-30,79,28);
 			
 			struct window_info * win_info_ptr = (struct window_info *) vector_at(&(desktop.window_info_vector),i);
 			set_desktop_color(w, &font_white);
-			set_font(w->gd, FONT_MATRIX_10);
-			show_text(w->gd, (i+1)*80 + 10, 3, win_info_ptr->title, strlen(win_info_ptr->title));
+			int len=strlen(win_info_ptr->title);
+			if(len>=10){
+				int j=0;
+				int n=0;
+				for(j=0;j<len;j++)
+					if((win_info_ptr->title)[j]=='_')
+						n=j;
+				
+				char* t1=(char*)malloc(sizeof(char)*(n+1));
+				char* t2=(char*)malloc(sizeof(char)* (len-n-1+1));
+				
+				for(j=0;j<n;j++)
+					t1[j]=(win_info_ptr->title)[j];
+				t1[j]=0;
+				for(j=0;j<len-n-1;j++)
+					t2[j]=(win_info_ptr->title)[j+n+1];
+				t2[j]=0;
+
+				set_font(w->gd, FONT_MATRIX_10);
+				show_text(w->gd, (i+1)*80 + ((10-n)/2-1)*10, screen_h-30, t1, strlen(t1));
+				set_font(w->gd, FONT_MATRIX_10);
+				show_text(w->gd, (i+1)*80 + ((10-len+n+1)/2-1)*10, 10+screen_h-30, t2, strlen(t2));
+			}
+			else{
+				set_font(w->gd, FONT_MATRIX_10);
+				show_text(w->gd, (i+1)*80 + ((10-len)/2-1)*10, 3+screen_h-30, win_info_ptr->title, strlen(win_info_ptr->title));
+			}
 			
 		}
-		/* 让msg失去作用 */
-		//msg->base.type = MESSAGE_TYPE_WINDOW_REGISTER;
-    
-
     return 0;
 }
 
@@ -275,24 +266,48 @@ static si_t desktop_default_widget_repaint(struct window * w, union message * ms
  * @brief 重绘桌面任务栏
  **/
 extern void desktop_bar_repaint(struct window* w){
-	set_area(w->gd,0,0,w->area.width, 30);
+	set_area(w->gd,0,screen_h-30,w->area.width, 30);
 	set_desktop_color(w, &ground_purple);
-    fill_rectangle(w->gd, 0, 0, w->area.width, 30);
+    fill_rectangle(w->gd, 0, screen_h-30, w->area.width, 30);
 
     /* 字体 */
     set_desktop_color(w, &font_white);
     set_font(w->gd, FONT_MATRIX_12);
     /* 标题 */
-    show_text(w->gd, 15, 3 , w->title, strlen(w->title));
+    show_text(w->gd, 15, 3+screen_h-30, w->title, strlen(w->title));
 		
 	for(int i=0;i<bar_num;i++){
 		set_desktop_color(w,&bar_blue);
-        fill_rectangle(w->gd,(i+1)*80,1,79,28);
+        fill_rectangle(w->gd,(i+1)*80,1+screen_h-30,79,28);
 		
 		struct window_info * win_info_ptr = (struct window_info *) vector_at(&(desktop.window_info_vector),i);
 		set_desktop_color(w, &font_white);
-		set_font(w->gd, FONT_MATRIX_10);
-		show_text(w->gd, (i+1)*80 + 10, 3, win_info_ptr->title, strlen(win_info_ptr->title));
+		int len=strlen(win_info_ptr->title);
+		if(len>=10){
+				int j=0;
+				int n=0;
+				for(j=0;j<len;j++)
+					if((win_info_ptr->title)[j]=='_')
+						n=j;
+				
+			char* t1=(char*)malloc(sizeof(char)*(n+1));
+			char* t2=(char*)malloc(sizeof(char)* (len-n-1+1));
+			for(j=0;j<n;j++)
+				t1[j]=(win_info_ptr->title)[j];
+			t1[j]=0;
+			for(j=0;j<len-n-1;j++)
+				t2[j]=(win_info_ptr->title)[j+n+1];
+			t2[j]=0;
+
+				set_font(w->gd, FONT_MATRIX_10);
+				show_text(w->gd, (i+1)*80 + ((10-n)/2-1)*10, screen_h-30, t1, strlen(t1));
+				set_font(w->gd, FONT_MATRIX_10);
+				show_text(w->gd, (i+1)*80 + ((10-len+n+1)/2-1)*10, 10+screen_h-30, t2, strlen(t2));
+			}
+			else{
+				set_font(w->gd, FONT_MATRIX_10);
+				show_text(w->gd, (i+1)*80 + ((10-len)/2-1)*10, 3+screen_h-30, win_info_ptr->title, strlen(win_info_ptr->title));
+			}
 		
 
 	}
@@ -306,12 +321,6 @@ static si_t desktop_default_window_activate(struct window * w, union message * m
     if(w->visible && !w->is_activated)
     {
         w->is_activated = 1;
-
-        /**
-         * only repaint decoration part
-         **/
-        //paint_desktop_decoration(w);
-
         desktop_default_widget_show(w, msg);
     }
 
@@ -327,15 +336,12 @@ static si_t desktop_default_window_deactivate(struct window * w, union message *
     if(w->visible && w->is_activated)
     {
         si_t x, y, width, height;
-        //w->is_activated = 0;
-
         /* 设置图形设备的工作区域 */
         x = w->area.x;
         y = w->area.y ;
         width = w->area.width;
         height = w->area.height;
         set_area(w->gd, x, y, width, height);
-
         update(w->gd);
     }
     w->is_activated = 0;
@@ -380,8 +386,7 @@ si_t desktop_default_callback(addr_t w, addr_t m)
         case MESSAGE_TYPE_WIDGET_RESIZE:
         /*
             printf("MESSAGE_TYPE_WIDGET_RESIZE\n");
-        */
-            
+        */         
             break;
 
         case MESSAGE_TYPE_WINDOW_ACTIVATE:
@@ -401,22 +406,19 @@ si_t desktop_default_callback(addr_t w, addr_t m)
         case MESSAGE_TYPE_WINDOW_MINIMIZE:
         /*
             printf("MESSAGE_TYPE_WINDOW_MINIMIZE\n");
-        */
-            
+        */           
             break;
 
         case MESSAGE_TYPE_WINDOW_MAXIMIZE:
         /*
             printf("MESSAGE_TYPE_WINDOW_MAXIMIZE\n");
-        */
-            
+        */            
             break;
 
         case MESSAGE_TYPE_WINDOW_RESTORE:
         /*
             printf("MESSAGE_TYPE_WINDOW_RESTORE\n");
-        */
-            
+        */            
             break;
 
         default:
