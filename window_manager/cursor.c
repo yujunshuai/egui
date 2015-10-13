@@ -100,6 +100,7 @@ static si_t cursor_get_refresh_area(struct rectangle *result)
 
 si_t cursor_paint()
 {
+    //screen_flush(0, 0, global_screen.width, global_screen.height);
     struct rectangle refarea;
     if(!global_screen.visible) {
         return 1;
@@ -132,7 +133,7 @@ si_t cursor_paint()
             refarea.x, refarea.y,
             refarea.x, refarea.y,
             refarea.width, refarea.height);
-
+    
     return 0;
 }
 

@@ -459,7 +459,7 @@ static si_t register_window_handler(addr_t app_ptr, si_t parent_descripter, char
 	send_window_activate_message(&global_wm.active_app_info_ptr->uds, NULL, (si_t)global_wm.active_win_info_ptr);
 
 	/* 刷新包括新窗口在内的所有窗口 */
-	flush_below_in_z_order(app_info_ptr, win_info_ptr, &win_info_ptr->area);
+	//flush_below_in_z_order(app_info_ptr, win_info_ptr, &win_info_ptr->area);
 
 	/* 刷新包括新窗口在内的所有窗口 */
 	flush_above_in_z_order_including(app_info_ptr, win_info_ptr, &win_info_ptr->area);

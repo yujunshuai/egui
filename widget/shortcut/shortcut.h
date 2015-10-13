@@ -66,6 +66,8 @@ struct shortcut
 	char img_normal_path[255]; 
 	char img_select_path[255];
 	char  text[255];
+	char app_name[30];
+	char app_path[100];
 	/* see the enum shortcut_type */
 	si_t type;
 	si_t is_text_visiable;

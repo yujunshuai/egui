@@ -29,9 +29,12 @@
 
 # include <stdio.h>
 # include <sys/types.h>
+# include <sys/stat.h>
 # include <string.h>
 # include <unistd.h>
 #include <time.h>
+#include<dirent.h>
+
 
 # include "geometry.h"
 # include "comm.h"
@@ -52,7 +55,6 @@ struct desktop_info desktop;
 struct vector sh_desktop_vector;
 struct rectangle** area_pptr = NULL;
 int** flag_pptr = NULL;
-char file_path[]="/home/wangfei/egui/_bulid/debug/samples/";
 /* 初始化任务栏状态 */
 si_t bar_num=0;
 /* 初始化屏幕大小 */
@@ -61,6 +63,16 @@ si_t screen_h = 0;
 
 si_t area_num_x=0;
 si_t area_num_y=0;
+
+
+void sin_app(){
+	pid_t id;
+	id = fork();
+	if(id == 0){
+		execl("/home/wangfei/egui/_bulid/debug/samples/single_window","./single_window",NULL);
+	}
+}
+
 //找到但当前区域已有快捷方式，返回0；
 //找到且当前区域无快捷方式，返回1；
 //找不到返回-1；
@@ -110,55 +122,8 @@ si_t diff_timeval(struct timeval * t1, struct timeval * t2, struct timeval * res
 
 
 
-void sin_app(){
-	pid_t id;
-	id = fork();
-	char* full_path=(char*)malloc(strlen(file_path)+13+1);
-	strcpy(full_path,file_path);
-	strcat(full_path,&"single_window");
-	if(id == 0){
-		//execl("/home/wangfei/egui/_bulid/debug/samples/single_window","./single_window",NULL);
-		execl(*full_path,"./single_window",NULL);
-	}
-}
-void pop_app(){
-	pid_t id;
-	id = fork();
-	if(id == 0){
-		execl("/home/wangfei/egui/_bulid/debug/samples/pop_up_window","./pop_up_window",NULL);
-	}
-}
-void calc_app(){
-	pid_t id;
-	id = fork();
-	if(id == 0){
-		execl("/home/wangfei/egui/_bulid/debug/samples/calculator/calculator","./calculator",NULL);
-	}
-}
-void game_app(){
-	pid_t id;
-	id = fork();
-	if(id == 0){
-		execl("/home/wangfei/egui/_bulid/debug/samples/game","./game",NULL);
-	}
-}
-void file_app(){
-	pid_t id;
-	id = fork();
-	if(id == 0){
-		execl("/home/wangfei/egui/_bulid/debug/samples/file_browser/file_browser","./file_browser",NULL);
-	}
-}
 
-void end_app(){
-	pid_t id;
-	id = fork();
-	if(id == 0){
-		execl("/home/wangfei/egui/_bulid/debug/samples/shutdown","./shutdown",NULL);
-	}
-}
-
-si_t shortcut_calc_callback(void * sh, void * msg)
+si_t shortcut_callback(void * sh, void * msg)
 {
 	struct shortcut * sh_ptr=sh;
 	union message * m = msg;
@@ -206,7 +171,18 @@ si_t shortcut_calc_callback(void * sh, void * msg)
 		case MESSAGE_TYPE_MOUSE_DOUBLE_CLICK:
 			shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
 			sh_ptr->flag=0;
-			calc_app();
+			//calc_app();
+			pid_t id;
+			id = fork();
+			char* full_path=(char*)malloc(strlen(sh_ptr->app_path)+strlen(sh_ptr->app_name)+1);
+			char* act=(char*)malloc(2+strlen(sh_ptr->app_name)+1);
+			strcpy(full_path,sh_ptr->app_path);
+			strcat(full_path,sh_ptr->app_name);
+			act[0]='.',act[1]='/';
+			strcat(act,sh_ptr->app_name);
+			if(id == 0){
+				execl(full_path,act,NULL);
+			}
 			break;
 		default:
 			shortcut_default_callback(sh,msg);
@@ -215,290 +191,6 @@ si_t shortcut_calc_callback(void * sh, void * msg)
 	return 0;
 }
 
-si_t shortcut_file_callback(void * sh, void * msg)
-{
-	struct shortcut * sh_ptr=sh;
-	union message * m = msg;
-	switch(m->base.type)
-	{
-		case MESSAGE_TYPE_MOUSE_PRESS:
-			sh_ptr->last_do_time=m->base.time;			  
-			break;
-
-		case MESSAGE_TYPE_MOUSE_RELEASE:
-		{
-			sh_ptr->last_do_time.tv_sec=0;	
-			sh_ptr->last_do_time.tv_usec=0;
-			 
-		}
-			break;
-		case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
-		{
-			if(sh_ptr->flag==0){
-				for(int i=0;i<APP_NUMBER;i++){
-					struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-					shortcut_set_img_path(sh, sh->img_normal_path);
-					sh->flag=0;
-				}
-				shortcut_set_img_path(sh_ptr, sh_ptr->img_select_path);
-				sh_ptr->flag=1;
-			}
-			else{
-				shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
-				sh_ptr->flag=0;
-			}
-
-			sh_ptr->last_do_time.tv_sec=0;	
-			sh_ptr->last_do_time.tv_usec=0;
-			// 重绘所有桌面快捷方式
-			for(int i=0;i<APP_NUMBER;i++){
-				struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-			  	shortcut_repaint(sh);
-			  	shortcut_show(sh);
-			}
-			
-		}
-			break;
-	
-		case MESSAGE_TYPE_MOUSE_DOUBLE_CLICK:
-			shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
-			sh_ptr->flag=0;
-			file_app();
-			break;
-		default:
-			shortcut_default_callback(sh,msg);
-			break;
-	}
-	return 0;
-}
-
-si_t shortcut_game_callback(void * sh, void * msg)
-{
-	struct shortcut * sh_ptr=sh;
-	union message * m = msg;
-	switch(m->base.type)
-	{
-		case MESSAGE_TYPE_MOUSE_PRESS:
-			sh_ptr->last_do_time=m->base.time;			  
-			break;
-
-		case MESSAGE_TYPE_MOUSE_RELEASE:
-		{
-			sh_ptr->last_do_time.tv_sec=0;	
-			sh_ptr->last_do_time.tv_usec=0;
-			 
-		}
-			break;
-		case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
-		{
-			if(sh_ptr->flag==0){
-				for(int i=0;i<APP_NUMBER;i++){
-					struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-					shortcut_set_img_path(sh, sh->img_normal_path);
-					sh->flag=0;
-				}
-				shortcut_set_img_path(sh_ptr, sh_ptr->img_select_path);
-				sh_ptr->flag=1;
-			}
-			else{
-				shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
-				sh_ptr->flag=0;
-			}
-
-			sh_ptr->last_do_time.tv_sec=0;	
-			sh_ptr->last_do_time.tv_usec=0;
-			// 重绘所有桌面快捷方式
-			for(int i=0;i<APP_NUMBER;i++){
-				struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-			  	shortcut_repaint(sh);
-			  	shortcut_show(sh);
-			}
-			
-		}
-			break;
-	
-		case MESSAGE_TYPE_MOUSE_DOUBLE_CLICK:
-			shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
-			sh_ptr->flag=0;
-			game_app();
-			break;
-		default:
-			shortcut_default_callback(sh,msg);
-			break;
-	}
-	return 0;
-}
-
-si_t shortcut_sin_callback(void * sh, void * msg)
-{
-	struct shortcut * sh_ptr=sh;
-	union message * m = msg;
-	switch(m->base.type)
-	{
-		case MESSAGE_TYPE_MOUSE_PRESS:
-			sh_ptr->last_do_time=m->base.time;			  
-			break;
-
-		case MESSAGE_TYPE_MOUSE_RELEASE:
-		{
-			sh_ptr->last_do_time.tv_sec=0;	
-			sh_ptr->last_do_time.tv_usec=0;
-			 
-		}
-			break;
-		case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
-		{
-			if(sh_ptr->flag==0){
-				for(int i=0;i<APP_NUMBER;i++){
-					struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-					shortcut_set_img_path(sh, sh->img_normal_path);
-					sh->flag=0;
-				}
-				shortcut_set_img_path(sh_ptr, sh_ptr->img_select_path);
-				sh_ptr->flag=1;
-			}
-			else{
-				shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
-				sh_ptr->flag=0;
-			}
-
-			sh_ptr->last_do_time.tv_sec=0;	
-			sh_ptr->last_do_time.tv_usec=0;
-			// 重绘所有桌面快捷方式
-			for(int i=0;i<APP_NUMBER;i++){
-				struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-			  	shortcut_repaint(sh);
-			  	shortcut_show(sh);
-			}
-			
-		}
-			break;
-	
-		case MESSAGE_TYPE_MOUSE_DOUBLE_CLICK:
-			shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
-			sh_ptr->flag=0;
-			sin_app();
-			break;
-		default:
-			shortcut_default_callback(sh,msg);
-			break;
-	}
-	return 0;
-}
-
-si_t shortcut_pop_callback(void * sh, void * msg)
-{
-	struct shortcut * sh_ptr=sh;
-	union message * m = msg;
-	switch(m->base.type)
-	{
-		case MESSAGE_TYPE_MOUSE_PRESS:
-			sh_ptr->last_do_time=m->base.time;			  
-			break;
-
-		case MESSAGE_TYPE_MOUSE_RELEASE:
-		{
-			sh_ptr->last_do_time.tv_sec=0;	
-			sh_ptr->last_do_time.tv_usec=0;
-			 
-		}
-			break;
-		case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
-		{
-			if(sh_ptr->flag==0){
-				for(int i=0;i<APP_NUMBER;i++){
-					struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-					shortcut_set_img_path(sh, sh->img_normal_path);
-					sh->flag=0;
-				}
-				shortcut_set_img_path(sh_ptr, sh_ptr->img_select_path);
-				sh_ptr->flag=1;
-			}
-			else{
-				shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
-				sh_ptr->flag=0;
-			}
-
-			sh_ptr->last_do_time.tv_sec=0;	
-			sh_ptr->last_do_time.tv_usec=0;
-			// 重绘所有桌面快捷方式
-			for(int i=0;i<APP_NUMBER;i++){
-				struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-			  	shortcut_repaint(sh);
-			  	shortcut_show(sh);
-			}
-			
-		}
-			break;
-	
-		case MESSAGE_TYPE_MOUSE_DOUBLE_CLICK:
-			shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
-			sh_ptr->flag=0;
-			pop_app();
-			break;
-		default:
-			shortcut_default_callback(sh,msg);
-			break;
-	}
-	return 0;
-}
-
-si_t shortcut_end_callback(void * sh, void * msg)
-{
-	struct shortcut * sh_ptr=sh;
-	union message * m = msg;
-	switch(m->base.type)
-	{
-		case MESSAGE_TYPE_MOUSE_PRESS:
-			sh_ptr->last_do_time=m->base.time;			  
-			break;
-
-		case MESSAGE_TYPE_MOUSE_RELEASE:
-		{
-			sh_ptr->last_do_time.tv_sec=0;	
-			sh_ptr->last_do_time.tv_usec=0;
-			 
-		}
-			break;
-		case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
-		{
-			if(sh_ptr->flag==0){
-				for(int i=0;i<APP_NUMBER;i++){
-					struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-					shortcut_set_img_path(sh, sh->img_normal_path);
-					sh->flag=0;
-				}
-				shortcut_set_img_path(sh_ptr, sh_ptr->img_select_path);
-				sh_ptr->flag=1;
-			}
-			else{
-				shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
-				sh_ptr->flag=0;
-			}
-
-			sh_ptr->last_do_time.tv_sec=0;	
-			sh_ptr->last_do_time.tv_usec=0;
-			// 重绘所有桌面快捷方式
-			for(int i=0;i<APP_NUMBER;i++){
-				struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-			  	shortcut_repaint(sh);
-			  	shortcut_show(sh);
-			}
-			
-		}
-			break;
-	
-		case MESSAGE_TYPE_MOUSE_DOUBLE_CLICK:
-			shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
-			sh_ptr->flag=0;
-			end_app();
-			break;
-		default:
-			shortcut_default_callback(sh,msg);
-			break;
-	}
-	return 0;
-}
 
 
 /* 桌面的处理函数 */
@@ -515,6 +207,40 @@ void desktop_handler(addr_t arg, union message* msg)
 		
 	switch(message_get_type(msg))
 	{
+		//当敲击回车时，若有快捷方式被选中，则启动程序
+		case MESSAGE_TYPE_KEYBD_PRESS:
+			if(message_get_keybd_code(msg)==INPUT_CODE_KEYBD_ENTER){				
+				struct shortcut* sh_desktop_ptr = NULL;
+				int find_num=0;  //查找正在作用的桌面图标
+				for(find_num=0; find_num < APP_NUMBER; find_num++){
+					sh_desktop_ptr = vector_at(&sh_desktop_vector, find_num);
+					if(sh_desktop_ptr->flag==1)
+						break;
+				}
+				sh_desktop_ptr->flag=0;
+				sh_desktop_ptr->last_do_time.tv_sec=0;	
+				sh_desktop_ptr->last_do_time.tv_usec=0;
+				shortcut_set_img_path(sh_desktop_ptr, sh_desktop_ptr->img_normal_path);
+				shortcut_repaint(sh_desktop_ptr);
+				shortcut_show(sh_desktop_ptr);
+				// 启动要打开的程序 
+				if(find_num < APP_NUMBER){	
+					pid_t id;
+					id = fork();
+					char* full_path=(char*)malloc(strlen(sh_desktop_ptr->app_path)+strlen(sh_desktop_ptr->app_name)+1);
+					char* act=(char*)malloc(2+strlen(sh_desktop_ptr->app_name)+1);
+					strcpy(full_path,sh_desktop_ptr->app_path);
+					strcat(full_path,sh_desktop_ptr->app_name);
+					act[0]='.',act[1]='/';
+					strcat(act,sh_desktop_ptr->app_name);
+					if(id == 0){
+						execl(full_path,act,NULL);
+					}
+				}
+			}
+		break;
+
+
 		/* 处理桌面图标拖动的情况 */
 		case MESSAGE_TYPE_MOUSE_RELEASE:
 		 {	
@@ -565,6 +291,29 @@ void desktop_handler(addr_t arg, union message* msg)
 				activate_window(win_info_ptr->window_descripter);
 			} 
 
+
+			struct point new_point = msg->base.cursor_position;
+			struct point area_num;
+			if( find_witch_area(new_point, &area_num) == 1){
+				struct shortcut* sh_desktop_ptr = NULL;
+				int find_num=0;  //查找正在作用的桌面图标
+				for(find_num=0; find_num < APP_NUMBER; find_num++){
+					sh_desktop_ptr = vector_at(&sh_desktop_vector, find_num);
+					if(sh_desktop_ptr->flag==1)
+						break;
+				}
+				if(find_num < APP_NUMBER){
+					// 重绘所有桌面快捷方式
+					for(int i=0;i<APP_NUMBER;i++){
+						struct shortcut* sh = vector_at(&sh_desktop_vector, i);
+						sh->flag=0;
+						shortcut_set_img_path(sh, sh->img_normal_path);
+					  	shortcut_repaint(sh);
+					  	shortcut_show(sh);
+					}
+				}
+			}
+
 		}
 		break;
 
@@ -592,7 +341,8 @@ void desktop_handler(addr_t arg, union message* msg)
 			desktop_bar_repaint(global_application.main_window);
 		}
 		break;
-	
+
+
 	}
 	
 }
@@ -656,80 +406,99 @@ int main()
 	image_view_set_bounds(Desktop_im, 0, 0, screen_w ,screen_h-30);
 
 
-	/* 对桌面按钮初始化 */
-	for(i=0;i<APP_NUMBER;i++){
-		/* 申请按钮 */
-    	struct shortcut* sh_desktop_ptr = shortcut_init(2);
-    	/* 申请失败 */
-    	if(sh_desktop_ptr == NULL)
-    	{
-        	application_exit();
-        	return -1;
-    	}
-    	sh_desktop_ptr->back_color.r = 0;
-    	sh_desktop_ptr->back_color.g = 100;
-    	sh_desktop_ptr->back_color.b = 0;
-    	sh_desktop_ptr->back_color.a = 0;
-    	//shortcut_set_bounds(sh_desktop_ptr ,30,(i+1)*80,54,70); //要求所有桌面图标为54*54
-		sh_desktop_ptr->position_x=0;
-		sh_desktop_ptr->position_y=i;
-		struct point p;
-		p.x=sh_desktop_ptr->position_x;
-		p.y=sh_desktop_ptr->position_y;
-		reset_shortcut_bound(sh_desktop_ptr,p);
-		
-    	shortcut_set_is_text_visiable(sh_desktop_ptr ,1);
-		vector_push_back(&sh_desktop_vector, sh_desktop_ptr, sizeof(struct shortcut));
-    }
+
+
+
+
 	/* 配置各个桌面按钮 */
 	struct shortcut* sh_desktop_ptr = NULL;
-    /* 第一个是计算器 */
-	sh_desktop_ptr = vector_at(&sh_desktop_vector, 0);
-	shortcut_set_text(sh_desktop_ptr,"calc");
-	shortcut_set_img_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/calculator_big.bmp");
-	shortcut_set_img_normal_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/calculator_big.bmp");
-	shortcut_set_img_select_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/calculator_select_big.bmp");
-	sh_desktop_ptr->callback = shortcut_calc_callback;
+	//load_shortcut();
+	{
+		vector_init(&sh_desktop_vector);
+		DIR * dir_ptr;
+		char path[]="/home/wangfei/egui/debug/samples/Desktop/shortcut/";
+		char full_path[1024]={0};
+		struct dirent * dirent_ptr;
+		char content[1024];
+		struct stat file_info;
+		FILE *fp;
+		dir_ptr = opendir(path);
+		int num=0;
+	
+		if(dir_ptr == NULL)
+		{
+			//printf("can't open dir\n");
+		    return -1;
+		}
 
-	/* 第二个是资源管理器 */
-	sh_desktop_ptr = vector_at(&sh_desktop_vector, 1);
-	shortcut_set_text(sh_desktop_ptr,"file");
-	shortcut_set_img_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/file_browser_big.bmp");
-	shortcut_set_img_normal_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/file_browser_big.bmp");
-	shortcut_set_img_select_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/file_browser_select_big.bmp");
-	sh_desktop_ptr->callback = shortcut_file_callback;	
-    
-    /* 第三个是game */
-	sh_desktop_ptr = vector_at(&sh_desktop_vector, 2);
-	shortcut_set_text(sh_desktop_ptr,"game");
-	shortcut_set_img_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/game_big.bmp");
-	shortcut_set_img_normal_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/game_big.bmp");
-	shortcut_set_img_select_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/game_select_big.bmp");
-	sh_desktop_ptr->callback = shortcut_game_callback;    
-    
-    /* 第四个是single */
-	sh_desktop_ptr = vector_at(&sh_desktop_vector, 3);
-	shortcut_set_text(sh_desktop_ptr,"sin");
-	shortcut_set_img_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/single_window_big.bmp");
-	shortcut_set_img_normal_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/single_window_big.bmp");
-	shortcut_set_img_select_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/single_window_select_big.bmp");
-	sh_desktop_ptr->callback = shortcut_sin_callback;  
-	  
-    /* 第五个是pop */
-	sh_desktop_ptr = vector_at(&sh_desktop_vector, 4);
-	shortcut_set_text(sh_desktop_ptr,"pop");
-	shortcut_set_img_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/pop_up_window_big.bmp");
-	shortcut_set_img_normal_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/pop_up_window_big.bmp");
-	shortcut_set_img_select_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/pop_up_window_select_big.bmp");
-	sh_desktop_ptr->callback = shortcut_pop_callback;
+	//////////////////////////////////////////////////////
+		while((dirent_ptr = readdir(dir_ptr)) != 0)
+		{
+		    lstat(dirent_ptr->d_name, &file_info);
+		    if(strlen(dirent_ptr->d_name) >2){
+		        strcpy(full_path,path);
+		        strcat(full_path,dirent_ptr->d_name);
+		        if((fp=fopen(full_path,"r"))==NULL)
+		        {
+		            return -1;
+		        }
 
-	/* 第六个是 end */
-	sh_desktop_ptr = vector_at(&sh_desktop_vector, 5);
-	shortcut_set_text(sh_desktop_ptr,"end");
-	shortcut_set_img_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/shutdown_big.bmp");
-	shortcut_set_img_normal_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/shutdown_big.bmp");
-	shortcut_set_img_select_path(sh_desktop_ptr,"/home/wangfei/egui/resource/icons/shutdown_select_big.bmp");
-	sh_desktop_ptr->callback = shortcut_end_callback;	
+
+				/* 申请按钮 */
+				struct shortcut* sh_desktop_ptr = shortcut_init(2);
+				/* 申请失败 */
+				if(sh_desktop_ptr == NULL)
+				{
+		    		application_exit();
+		    		return -1;
+				}
+			
+			
+				sh_desktop_ptr->back_color.r = 0;
+				sh_desktop_ptr->back_color.g = 100;
+				sh_desktop_ptr->back_color.b = 0;
+				sh_desktop_ptr->back_color.a = 0;
+				sh_desktop_ptr->position_x=0;
+				sh_desktop_ptr->position_y=num;
+				struct point p;
+				p.x=sh_desktop_ptr->position_x;
+				p.y=sh_desktop_ptr->position_y;
+				reset_shortcut_bound(sh_desktop_ptr,p);
+				
+				shortcut_set_is_text_visiable(sh_desktop_ptr ,1);
+				vector_push_back(&sh_desktop_vector, sh_desktop_ptr, sizeof(struct shortcut));
+				struct shortcut* sh= vector_at(&sh_desktop_vector, num);
+				int count=0;
+		        while(fgets(content,1024,fp)){
+					content[strlen(content)-1]=0;
+					if(count==0)
+						shortcut_set_text(sh,content);
+					else if(count==1)
+						shortcut_set_img_path(sh,content);
+					else if(count==2)
+						shortcut_set_img_normal_path(sh,content);
+					else if(count==3)
+						shortcut_set_img_select_path(sh,content);
+					else if(count==4)
+						strcpy(sh->app_name, content);
+					else if(count==5)
+						strcpy(sh->app_path, content);
+					memset(content , 0, sizeof(char)*1024);
+					count++;
+		        }
+				sh->callback = shortcut_callback;
+				num++;
+		    }
+		}
+		closedir(dir_ptr);
+	}
+
+
+
+
+
+
+	
 
     /* 背景图片添加到窗口 */
     object_attach_child(OBJECT_POINTER(Desktop_w), OBJECT_POINTER(Desktop_im));   
