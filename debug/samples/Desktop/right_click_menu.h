@@ -26,39 +26,41 @@
  *
  * All rights reserved.
 **/
-# ifndef _DESKTOP_TOOL_H_
-# define _DESKTOP_TOOL_H_ 1
+# ifndef _RIGHT_CLICK_MENU_H_
+# define _RIGHT_CLICK_MENU_H_ 1
 
+# include <stdio.h>
+# include <string.h>
+# include <unistd.h>
 # include <base_type.h>
+# include <comm.h> 
+# include <widget.h>
+
+# include "geometry.h"
+# include "comm.h"
+# include "application.h"
+# include "client_lib.h"
+# include "widget.h"
+
+# include "color_base.h"
 
 # include "color.h"
 
-extern struct color light_red;
+si_t
+right_click_menu_NEW_FOLDER(void * bt,void * msg);
 
-extern struct color light_green;
-extern struct color friut_green;
+si_t
+right_click_menu_NEW_FILE(void * bt,void * msg);
 
-extern struct color barely_blue;
-extern struct color xue_blue;
-extern struct color heavy_blue;
-extern struct color bar_blue;
-extern struct color ground_purple;
+si_t
+right_click_menu_FLUSH(void * bt,void * msg);
 
-extern struct color font_white;
+si_t right_click_menu_init();
 
+void right_click_menu_handle(union message* msg);
 
-extern int app_number;
-extern struct image_view * Desktop_im;
-extern struct vector sh_desktop_vector;
+void right_click_menu_cancel();
 
-
-
-
-
-
-
-
-
-
+void desktop_flush();
 
 # endif

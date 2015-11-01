@@ -89,6 +89,8 @@ void *shortcut_init(si_t id)
 	memset(addr->text , 0, sizeof(char)*255);
 	memset(addr->app_name , 0, sizeof(char)*30);
 	memset(addr->app_path , 0, sizeof(char)*100);
+	memset(addr->link_file_path , 0, sizeof(char)*100);
+	
 	
     /* 默认的回调函数 */
     addr->callback = shortcut_default_callback;
