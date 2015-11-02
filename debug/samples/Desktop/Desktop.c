@@ -149,6 +149,42 @@ si_t shortcut_act(struct shortcut* sh_ptr){
 }
 
 
+int change_file(char* file,char* src,char* des){
+	char file2[]="/home/wangfei/egui/debug/samples/Desktop/shortcut/temp";
+    FILE *in=fopen(file,"r");
+    FILE *out=fopen(file2,"w");  /*out是充当临时文件作用*/
+    char buffer[1024];
+	memset(buffer , 0, sizeof(char)*1024);
+    if(!in)
+    {
+        printf("cann't open file\n");
+        exit(1);
+    }
+    if(!out)
+    {
+        printf("cann't create file\n");
+        exit(1);
+    }
+        /*开始复制*/
+    while(fgets(buffer,1024,in))
+    {
+       //if(ch=='a') ch='p';
+	   char* ptr = strstr(buffer,src);
+	   if(ptr!=NULL){
+			strcpy(buffer,src);
+			strcat(buffer,des);
+			strcat(buffer,"\n");
+	   }
+       fputs(buffer,out);
+	   memset(buffer , 0, sizeof(char)*1024);
+    }
+    fclose(in);  
+	fclose(out);  
+    unlink(file); /*删除test.txt*/
+	chmod(file2, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IWOTH|S_IXOTH);
+    rename(file2,file); /*改名*/
+}
+
 si_t shortcut_callback(void * sh, void * msg)
 {
 	struct shortcut * sh_ptr=sh;
@@ -270,9 +306,13 @@ void desktop_handler(addr_t arg, union message* msg)
 						//设置新位置
 			  			struct point new_point = msg->base.cursor_position;
 						struct point area_num;
-						if( find_witch_area(new_point, &area_num) == 1)
+						if( find_witch_area(new_point, &area_num) == 1){
 							reset_shortcut_bound(sh_desktop_ptr, area_num);
-			 			//shortcut_set_bounds(sh_desktop_ptr, new_point.x, new_point.y, 54, 70);
+							char new_position[3];
+							int xx=(int)area_num.x,yy=(int)area_num.y;
+							new_position[0]=(char)(xx+48),new_position[1]=(char)(yy+48),new_position[2]=0;
+							change_file(sh_desktop_ptr->link_file_path,"POSITION:",new_position);
+						}
 			  			/* 桌面刷新重绘 */
 			  			image_view_reshow(Desktop_im);
   			  			/* 所有图标重绘 */				
@@ -428,7 +468,6 @@ int main()
         return -1;
     }
 	image_view_set_bounds(Desktop_im, 0, 0, screen_w ,screen_h-30);
-	object_attach_child(OBJECT_POINTER(Desktop_w), OBJECT_POINTER(Desktop_im)); 
 
 
 
@@ -501,22 +540,25 @@ int main()
 							strcpy(sh->app_path, content);
 						//如果指定位置
 						else if(count==5){
-							//若没有指定位置，则默认初始化位置
-							if(content[0]=='0' && content[1]=='0'){
+							//若没有指定位置，则默认初始化位置(POSITION:XX,实际位置在第9,10位)
+							if(content[9]=='0' && content[10]=='0'){
 							//直到将该快捷方式分配好位置为止
+								struct point p;
 								while(1){
-									struct point p;
 									p.x=num/area_num_y;
 									p.y=num%area_num_y;
 									num++;
 									if(reset_shortcut_bound(sh,p)==1)
 										break;
 								}
+								char new_position[3];
+								new_position[0]=(char)(p.x+48),new_position[1]=(char)(p.y+48),new_position[2]=0;
+								change_file(sh->link_file_path,"POSITION:",new_position);
 							}
 							//位置不是(0,0)
 							else{
 								struct point p;
-								p.x=content[0]-48,p.y=content[1]-48;
+								p.x=content[9]-48,p.y=content[10]-48;
 								reset_shortcut_bound(sh,p);
 							}
 						}
@@ -616,7 +658,7 @@ int main()
 	
 
     /* 背景图片添加到窗口 */
-    //object_attach_child(OBJECT_POINTER(Desktop_w), OBJECT_POINTER(Desktop_im));   
+    object_attach_child(OBJECT_POINTER(Desktop_w), OBJECT_POINTER(Desktop_im));   
     /* 将shortcut添加到窗口 */
     for(i=0;i<app_number;i++){
 		sh_desktop_ptr = vector_at(&sh_desktop_vector, i);

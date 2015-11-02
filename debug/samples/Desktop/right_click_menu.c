@@ -37,17 +37,14 @@
 # include "right_click_menu.h"
 
 /* 右键菜单 */
-# define MENU_NUM 4
+# define MENU_NUM 5
 
 /* 右键菜单 */
 static struct button * menu_button[MENU_NUM];
 static si_t menu_show = 0;
 struct shortcut* sh_desktop_ptr = NULL;
-//extern struct image_view * Desktop_im;
-/*桌面应用图标数*/
-//extern const si_t APP_NUMBER;
-//extern struct icon** ic_desktop_ptr;
-
+/*桌面应用图标数(app_number)*/
+char desktop_path[]="/home/wang/egui/debug/samples/Desktop/shortcut/";
 void create_new_folder(){ 
     si_t i=0;
     byte_t str[100]="/home/wang/egui/_build/MAIN/NEW FOLDER";
@@ -101,7 +98,7 @@ right_click_menu_NEW_FOLDER
     switch(message_get_type(msg))
     {
     	case MESSAGE_TYPE_MOUSE_PRESS:
-            create_new_folder();
+            //create_new_folder();
     	    break;
 
         default:
@@ -119,7 +116,7 @@ right_click_menu_NEW_FILE
     switch(message_get_type(msg))
     {
     	case MESSAGE_TYPE_MOUSE_PRESS:
-            create_new_file();
+            //create_new_file();
     	    break;
 
         default:
@@ -165,11 +162,51 @@ right_click_menu_rename
     return 0;
 }
 
+si_t shortcut_open(struct shortcut* sh_ptr){
+	shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
+	sh_ptr->flag=0;
+	pid_t id;
+	id = fork();
+	char* full_path=(char*)malloc(strlen(sh_ptr->app_path)+strlen(sh_ptr->app_name)+1);
+	char* act=(char*)malloc(2+strlen(sh_ptr->app_name)+1);
+	strcpy(full_path,sh_ptr->app_path);
+	strcat(full_path,sh_ptr->app_name);
+	act[0]='.',act[1]='/';
+	strcat(act,sh_ptr->app_name);
+	if(id == 0){
+		if(strstr(sh_ptr->app_name,"image_view")!=NULL)
+			execl(full_path,act,sh_ptr->link_file_path,NULL);
+		else if(strstr(sh_ptr->app_name,"editerbasic")!=NULL)
+			execl(full_path,act,sh_ptr->link_file_path,NULL);
+		else if(strstr(sh_ptr->app_name,"file_browser")!=NULL && strcmp(sh_ptr->text,"file")!=0)
+			execl(full_path,act,sh_ptr->link_file_path,NULL);
+		else
+			execl(full_path,act,NULL);
+	}
+}
+
+si_t right_click_menu_open(void * bt,void * msg){
+    switch(message_get_type(msg))
+    {
+    	case MESSAGE_TYPE_MOUSE_PRESS:
+    	    shortcut_open(sh_desktop_ptr);
+			right_click_menu_cancel();
+    	    break;
+
+        default:
+            button_default_callback(bt, msg);
+            break;
+    }
+    return 0;	
+
+}
+
 si_t right_click_menu_init() {
 	si_t i = 0;
 	for(i=0;i<MENU_NUM;i++)
 		menu_button[i]=NULL;
 	
+	//第一个邮件按钮（新建文件夹）
 	menu_button[0] = button_init("NEW FOLDER");
 	/* 申请失败 */
 	if(menu_button[0] == NULL)
@@ -180,9 +217,9 @@ si_t right_click_menu_init() {
 	window_set_color(menu_button[0], NULL, &light_green);
     	button_set_bounds(menu_button[0], 0, -30, 0, 0);
 	menu_button[0]->callback = right_click_menu_NEW_FOLDER;    
-	/* 添加button */   
-	object_attach_child(OBJECT_POINTER(Desktop_im), OBJECT_POINTER(menu_button[0]));
-	
+
+
+	//第二个邮件按钮（新建文件）
 	menu_button[1] = button_init("NEW FILE");
 	/* 申请失败 */
 	if(menu_button[1] == NULL)
@@ -193,10 +230,11 @@ si_t right_click_menu_init() {
 	window_set_color(menu_button[1], NULL, &light_green);
     	button_set_bounds(menu_button[1], 0, -30, 0, 0);
 	menu_button[1]->callback = right_click_menu_NEW_FILE;    
-	/* 添加button */   
-	object_attach_child(OBJECT_POINTER(Desktop_im), OBJECT_POINTER(menu_button[1]));
+
 	
-	menu_button[2] = button_init("rename");
+
+	//第三个邮件按钮（打开）
+	menu_button[2] = button_init("open");
 	/* 申请失败 */
 	if(menu_button[2] == NULL)
 	{
@@ -205,12 +243,11 @@ si_t right_click_menu_init() {
 	}
 	window_set_color(menu_button[2], NULL, &light_green);
     	button_set_bounds(menu_button[2], 0, -30, 0, 0);
-	menu_button[2]->callback = right_click_menu_rename;    
-	/* 添加button */   
-	object_attach_child(OBJECT_POINTER(Desktop_im), OBJECT_POINTER(menu_button[2]));
+	menu_button[2]->callback = right_click_menu_open;    
 
 
-	menu_button[3] = button_init("FLUSH");
+	//第四个邮件按钮（重命名）
+	menu_button[3] = button_init("rename");
 	/* 申请失败 */
 	if(menu_button[3] == NULL)
 	{
@@ -219,13 +256,28 @@ si_t right_click_menu_init() {
 	}
 	window_set_color(menu_button[3], NULL, &light_green);
     	button_set_bounds(menu_button[3], 0, -30, 0, 0);
-	menu_button[3]->callback = right_click_menu_FLUSH;    
+	menu_button[3]->callback = right_click_menu_rename;    
+
+
+	//第五个邮件按钮（刷新）
+	menu_button[4] = button_init("FLUSH");
+	/* 申请失败 */
+	if(menu_button[4] == NULL)
+	{
+		application_exit();
+		return -1;
+	}
+	window_set_color(menu_button[4], NULL, &light_green);
+    	button_set_bounds(menu_button[4], 0, -30, 0, 0);
+	menu_button[4]->callback = right_click_menu_FLUSH;    
 	/* 添加button */   
-	object_attach_child(OBJECT_POINTER(Desktop_im), OBJECT_POINTER(menu_button[3]));
+	for(i=0;i<MENU_NUM;i++)
+		object_attach_child(OBJECT_POINTER(Desktop_im), OBJECT_POINTER(menu_button[i]));
+
+
 	
 	/* 右键菜单不显示 */	
-	menu_show = 0;
-	
+	menu_show = 0;	
 	/*创建桌面文件夹*/
     if(access("/home/wang/egui/_build/MAIN",0)==-1){//access函数是查看文件是不是存在
 	if (mkdir("MAIN",0777)) {//如果不存在就用mkdir函数来创建
