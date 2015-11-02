@@ -65,13 +65,6 @@ si_t area_num_x=0;
 si_t area_num_y=0;
 
 
-void sin_app(){
-	pid_t id;
-	id = fork();
-	if(id == 0){
-		execl("/home/wangfei/egui/_bulid/debug/samples/single_window","./single_window",NULL);
-	}
-}
 
 //找到但当前区域已有快捷方式，返回0；
 //找到且当前区域无快捷方式，返回1；
@@ -144,7 +137,6 @@ si_t shortcut_act(struct shortcut* sh_ptr){
 	act[0]='.',act[1]='/';
 	strcat(act,sh_ptr->app_name);
 	if(id == 0){
-		//execl("/home/wangfei/egui/_bulid/debug/samples/file_browser/file_browser","./file_browser","/home/wangfei/egui",NULL);
 		if(strstr(sh_ptr->app_name,"image_view")!=NULL)
 			execl(full_path,act,sh_ptr->link_file_path,NULL);
 		else if(strstr(sh_ptr->app_name,"editerbasic")!=NULL)
@@ -296,7 +288,7 @@ void desktop_handler(addr_t arg, union message* msg)
 				/*右键菜单取消*/
 				right_click_menu_cancel();		  
 		 }
-			break;
+		break;
 		/* 任务栏的激活处理 */
 		case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
 		{
@@ -436,7 +428,7 @@ int main()
         return -1;
     }
 	image_view_set_bounds(Desktop_im, 0, 0, screen_w ,screen_h-30);
-
+	object_attach_child(OBJECT_POINTER(Desktop_w), OBJECT_POINTER(Desktop_im)); 
 
 
 
@@ -455,13 +447,10 @@ int main()
 		struct stat file_info;
 		FILE *fp;
 		dir_ptr = opendir(path);
-		int num=0;//默认的位置
+		int num=1;//默认的位置
 	
 		if(dir_ptr == NULL)
-		{
-			//printf("can't open dir\n");
 		    return -1;
-		}
 
 	//////////////////////////////////////////////////////
 		while((dirent_ptr = readdir(dir_ptr)) != 0)
@@ -474,7 +463,7 @@ int main()
 				lstat(full_path, &file_info);
 		        if((fp=fopen(full_path,"r"))==NULL)
 		        {
-		            return -1;
+		            //return -1;
 		        }
 				/* 申请快捷方式 */
 				struct shortcut* sh_desktop_ptr = shortcut_init(2);
@@ -482,7 +471,7 @@ int main()
 				if(sh_desktop_ptr == NULL)
 				{
 		    		application_exit();
-		    		return -1;
+		    		//return -1;
 				}
 			
 
@@ -493,10 +482,8 @@ int main()
 				//将快捷方式（widgt）与快捷方式文件/待链接的文件路径存到widgt里,以待之后对文件进行修改
 				strcpy(sh->link_file_path,full_path);
 				int count=0;
-
-
 				//当前文件是快捷方式文件，直接读取其中信息
-				if(strstr(dirent_ptr->d_name,"shortcut")!=NULL){
+				if(strstr(dirent_ptr->d_name,".shortcut")!=NULL){
 
 		        	while(fgets(content,1024,fp)){
 						content[strlen(content)-1]=0;
@@ -538,7 +525,7 @@ int main()
 		        	}
 				}
 				//当前文件是真实的图片
-				else if(strstr(dirent_ptr->d_name,"bmp")!=NULL){
+				else if(strstr(dirent_ptr->d_name,".bmp")!=NULL){
 					shortcut_set_text(sh,dirent_ptr->d_name);
 					shortcut_set_img_path(sh,"/home/wangfei/egui/resource/icons/file_icon/bmp_1.bmp");
 					shortcut_set_img_normal_path(sh,"/home/wangfei/egui/resource/icons/file_icon/bmp_1.bmp");
@@ -556,7 +543,6 @@ int main()
 					}					
 
 				}
-
 				//当前文件是其他文本文件
 				else if(S_ISREG(file_info.st_mode)){
 					shortcut_set_text(sh,dirent_ptr->d_name);
@@ -600,8 +586,8 @@ int main()
 					shortcut_set_img_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/ex_1.bmp");
 					shortcut_set_img_normal_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/ex_1.bmp");
 					shortcut_set_img_select_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/ex_2.bmp");
-					strcpy(sh->app_name, "NULL");
-				    strcpy(sh->app_path, "NULL");				
+					strcpy(sh->app_name, "editerbasic");
+				    strcpy(sh->app_path, "/home/wangfei/egui/_bulid/debug/samples/");				
 					//直到将该快捷方式分配好位置为止
 					while(1){
 						struct point p;
@@ -630,7 +616,7 @@ int main()
 	
 
     /* 背景图片添加到窗口 */
-    object_attach_child(OBJECT_POINTER(Desktop_w), OBJECT_POINTER(Desktop_im));   
+    //object_attach_child(OBJECT_POINTER(Desktop_w), OBJECT_POINTER(Desktop_im));   
     /* 将shortcut添加到窗口 */
     for(i=0;i<app_number;i++){
 		sh_desktop_ptr = vector_at(&sh_desktop_vector, i);

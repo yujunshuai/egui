@@ -55,6 +55,9 @@ right_click_menu_NEW_FILE(void * bt,void * msg);
 si_t
 right_click_menu_FLUSH(void * bt,void * msg);
 
+si_t
+right_click_menu_rename(void * bt,void * msg);
+
 si_t right_click_menu_init();
 
 void right_click_menu_handle(union message* msg);

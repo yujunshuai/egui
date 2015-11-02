@@ -14,5 +14,9 @@
 
 
 配置设置：
-	在debug/samples/Desktop/Desktop.c 和 window_manager/window_manager.c文件中把“wangfei”改成自己的用户名
+	在一些文件中把“wangfei”改成自己的用户名：
+		debug/samples/Desktop/Desktop.c 和 window_manager/window_manager.c文件
+		debug/samples/Desktop/shortcut/目录下所有‘.shortcut’文件
+		debug/samples/file_browser/my_widget.c
+		debug/samples/image_view.c
 	应用程序的菜单图标（左上角小图标）需要在主文件加下新建 ～/.egui/icons文件夹，icons即为egui/resource/icons文件夹

@@ -65,7 +65,7 @@ struct shortcut
 	char img_path[255];
 	char img_normal_path[255]; 
 	char img_select_path[255];
-	char  text[255];
+	char text[255];
 	char app_name[30];
 	char app_path[100];
 	char link_file_path[100];
