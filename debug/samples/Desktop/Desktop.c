@@ -137,12 +137,14 @@ si_t shortcut_act(struct shortcut* sh_ptr){
 	act[0]='.',act[1]='/';
 	strcat(act,sh_ptr->app_name);
 	if(id == 0){
-		if(strstr(sh_ptr->app_name,"image_view")!=NULL)
+		if(strstr(sh_ptr->app_name,"image_view")!=NULL && sh_ptr->is_real==1)
 			execl(full_path,act,sh_ptr->link_file_path,NULL);
-		else if(strstr(sh_ptr->app_name,"editerbasic")!=NULL)
+		else if(strstr(sh_ptr->app_name,"editerbasic")!=NULL && sh_ptr->is_real==1)
 			execl(full_path,act,sh_ptr->link_file_path,NULL);
-		else if(strstr(sh_ptr->app_name,"file_browser")!=NULL && strcmp(sh_ptr->text,"file")!=0)
+		else if(strstr(sh_ptr->app_name,"file_browser")!=NULL && sh_ptr->is_real==1)
 			execl(full_path,act,sh_ptr->link_file_path,NULL);
+		else if(strstr(sh_ptr->app_name,"NULL")!=NULL && sh_ptr->is_real==1)
+			;
 		else
 			execl(full_path,act,NULL);
 	}
@@ -150,7 +152,7 @@ si_t shortcut_act(struct shortcut* sh_ptr){
 
 
 int change_file(char* file,char* src,char* des){
-	char file2[]="/home/wangfei/egui/debug/samples/Desktop/shortcut/temp";
+	char file2[]="/home/wangfei/egui/debug/samples/Desktop/shortcut/temp11";
     FILE *in=fopen(file,"r");
     FILE *out=fopen(file2,"w");  /*out是充当临时文件作用*/
     char buffer[1024];
@@ -183,6 +185,7 @@ int change_file(char* file,char* src,char* des){
     unlink(file); /*删除test.txt*/
 	chmod(file2, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IWOTH|S_IXOTH);
     rename(file2,file); /*改名*/
+	return 0;
 }
 
 si_t shortcut_callback(void * sh, void * msg)
@@ -307,11 +310,14 @@ void desktop_handler(addr_t arg, union message* msg)
 			  			struct point new_point = msg->base.cursor_position;
 						struct point area_num;
 						if( find_witch_area(new_point, &area_num) == 1){
+							
 							reset_shortcut_bound(sh_desktop_ptr, area_num);
 							char new_position[3];
 							int xx=(int)area_num.x,yy=(int)area_num.y;
 							new_position[0]=(char)(xx+48),new_position[1]=(char)(yy+48),new_position[2]=0;
-							change_file(sh_desktop_ptr->link_file_path,"POSITION:",new_position);
+							if(sh_desktop_ptr->is_real!=1){
+								change_file(sh_desktop_ptr->link_file_path,"POSITION:",new_position);
+							}
 						}
 			  			/* 桌面刷新重绘 */
 			  			image_view_reshow(Desktop_im);
@@ -486,7 +492,7 @@ int main()
 		struct stat file_info;
 		FILE *fp;
 		dir_ptr = opendir(path);
-		int num=1;//默认的位置
+		int num=0;//默认的位置
 	
 		if(dir_ptr == NULL)
 		    return -1;
@@ -526,8 +532,8 @@ int main()
 
 		        	while(fgets(content,1024,fp)){
 						content[strlen(content)-1]=0;
-						if(count==0)
-							shortcut_set_text(sh,content);
+						if(count==0)	//(NAME:,实际内容在第5位)
+							shortcut_set_text(sh,content+5);
 						else if(count==1){
 							shortcut_set_img_path(sh,content);
 							shortcut_set_img_normal_path(sh,content);
@@ -559,9 +565,19 @@ int main()
 							else{
 								struct point p;
 								p.x=content[9]-48,p.y=content[10]-48;
-								reset_shortcut_bound(sh,p);
+								while(1){
+									if(reset_shortcut_bound(sh,p)==1){
+										char new_position[3];
+										new_position[0]=(char)(p.x+48),new_position[1]=(char)(p.y+48),new_position[2]=0;
+										change_file(sh->link_file_path,"POSITION:",new_position);
+										break;
+									}
+									p.x=p.x+(p.y+1)/area_num_y,p.y=(p.y+1)%area_num_y;
+								}
 							}
 						}
+						//与之关联的是快捷方式文件
+						sh->is_real=0;
 						memset(content , 0, sizeof(char)*1024);
 						count++;
 		        	}
@@ -582,15 +598,16 @@ int main()
 						num++;
 						if(reset_shortcut_bound(sh,p)==1)
 							break;
-					}					
-
+					}		
+					//与之关联的是真实文件			
+					sh->is_real=1;
 				}
 				//当前文件是其他文本文件
 				else if(S_ISREG(file_info.st_mode)){
 					shortcut_set_text(sh,dirent_ptr->d_name);
-					shortcut_set_img_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/unknow_1.bmp");
-					shortcut_set_img_normal_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/unknow_1.bmp");
-					shortcut_set_img_select_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/unknow_2.bmp");
+					shortcut_set_img_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/txt_1.bmp");
+					shortcut_set_img_normal_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/txt_1.bmp");
+					shortcut_set_img_select_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/txt_2.bmp");
 					strcpy(sh->app_name, "editerbasic");
 				    strcpy(sh->app_path, "/home/wangfei/egui/_bulid/debug/samples/");				
 					//直到将该快捷方式分配好位置为止
@@ -602,7 +619,8 @@ int main()
 						if(reset_shortcut_bound(sh,p)==1)
 							break;
 					}					
-
+					//与之关联的是真实文件			
+					sh->is_real=1;
 				}
 				//当前是文件夹（目录）
 				else if(S_ISDIR(file_info.st_mode)){
@@ -621,6 +639,8 @@ int main()
 						if(reset_shortcut_bound(sh,p)==1)
 							break;
 					}
+					//与之关联的是真实文件			
+					sh->is_real=1;
 				}
 				//当前文件是其他未知文件
 				else{
@@ -628,8 +648,8 @@ int main()
 					shortcut_set_img_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/ex_1.bmp");
 					shortcut_set_img_normal_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/ex_1.bmp");
 					shortcut_set_img_select_path(sh,"/home/wangfei/egui/resource/icons/file_icon2/ex_2.bmp");
-					strcpy(sh->app_name, "editerbasic");
-				    strcpy(sh->app_path, "/home/wangfei/egui/_bulid/debug/samples/");				
+					strcpy(sh->app_name, "NULL");
+				    strcpy(sh->app_path, "NULL");				
 					//直到将该快捷方式分配好位置为止
 					while(1){
 						struct point p;
@@ -639,7 +659,8 @@ int main()
 						if(reset_shortcut_bound(sh,p)==1)
 							break;
 					}					
-
+					//与之关联的是真实文件			
+					sh->is_real=1;
 				}
 
 				sh->callback = shortcut_callback;			

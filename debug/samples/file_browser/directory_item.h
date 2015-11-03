@@ -45,6 +45,17 @@ struct directory_item
 
     /* 是否是目录 */
     si_t is_directory;
+
+    /*文件大小 */
+    int file_size;
+
+    /*访问时间*/
+    time_t a_time;
+
+    /*修改时间*/
+    time_t m_time;
+
+
 };
 
 # endif

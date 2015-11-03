@@ -69,6 +69,7 @@ struct shortcut
 	char app_name[30];
 	char app_path[100];
 	char link_file_path[100];
+	int is_real;//0是快捷方式，1是链接真正文件
 	/* see the enum shortcut_type */
 	si_t type;
 	si_t is_text_visiable;

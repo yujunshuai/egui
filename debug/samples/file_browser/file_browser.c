@@ -85,7 +85,7 @@ si_t window_callback(addr_t w, addr_t m)
             label_set_bounds(l, 105, 6, width_screen-200, 26);
             scroll_bar_set_bounds(s, width_screen-36, 43, 20, height_screen-90);//1366 768
             button_set_bounds(b1, 10, 6, 90, 26);
-            button_set_bounds(b2, width_screen-45, 10, 20, 20);
+            button_set_bounds(b2, width_screen-45, 10, 25, 20);
             mw->area.x = 10;
             mw->area.width = width_screen-60;
             mw->area.height = height_screen-80;
@@ -102,7 +102,7 @@ si_t window_callback(addr_t w, addr_t m)
             label_set_bounds(l, 100, 6, 370, 26);
             scroll_bar_set_bounds(s, 475, 43, 20, 374);
             button_set_bounds(b1, 5, 6, 90, 26);
-            button_set_bounds(b2, 472, 10, 20, 20);
+            button_set_bounds(b2, 472, 10, 25, 20);
             mw->area.x = 5;
             mw->area.width = 465;
             mw->area.height = 384;
@@ -111,7 +111,7 @@ si_t window_callback(addr_t w, addr_t m)
             mw->start = 0;
             scroll_bar_set_view(s, 90 * ((vector_size(&file_list)-1)/num+2), 0);
             scroll_bar_update_offset(s, 0);
-        
+
             break;
 
         default:
@@ -177,7 +177,7 @@ static void mywidget_subscribe_scrollbar(struct widget* subscriber, struct widge
            mw->start += mw->count;
            my_widget_repaint(mw);
            my_widget_show(mw);
-        } 
+        }
         break;
 
         /**
@@ -354,20 +354,20 @@ int main(int argc, char* argv[])
 	button_set_font(b1, FONT_MATRIX_12);
 	button_set_color(b1, &light_blue, &barely_blue);
     b1->callback = button1_callback;
-    
+
     /* 申请按钮 */
-    b2 = button_init("I");
+    b2 = button_init("ic");
     /* 申请失败 */
     if(b2 == NULL)
     {
         application_exit();
         return -1;
     }
-	button_set_bounds(b2, 472, 10, 18, 20);
-	button_set_font(b2, FONT_MATRIX_12);
-	button_set_color(b2, &barely_blue,&white);
+	button_set_bounds(b2, 472, 10, 25, 20);
+	button_set_font(b2, FONT_MATRIX_08);
+	button_set_color(b2, &light_blue,&white);
     b2->callback = button2_callback;
-    
+
     /* 申请标签 */
     l = label_init(working_directory);
     /* 申请失败 */
@@ -465,7 +465,7 @@ int main(int argc, char* argv[])
     my_widget_repaint(mw);
     my_widget_show(mw);
 #endif
-    
+
     /* 运行 */
     application_exec();
 

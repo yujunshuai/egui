@@ -77,7 +77,7 @@ void *shortcut_init(si_t id)
 	addr->is_text_visiable = 0;
 
 	addr->flag = 0;
-	
+	addr->is_real = 0;
 	addr->position_x=0;
 	addr->position_y=0;
 	addr->last_do_time.tv_sec=0;

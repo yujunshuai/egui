@@ -46,10 +46,17 @@ extern struct color ground_purple;
 
 extern struct color font_white;
 
-
+//以下为Desktop.c 和其他文件会用到的外部全局变量，事先声明
 extern int app_number;
 extern struct image_view * Desktop_im;
 extern struct vector sh_desktop_vector;
+extern si_t area_num_x;
+extern si_t area_num_y;
+extern int** flag_pptr;
+extern struct rectangle** area_pptr;
+extern struct window * Desktop_w;
+
+extern si_t shortcut_callback(void * sh, void * msg);
 
 
 

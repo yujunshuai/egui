@@ -36,6 +36,7 @@
 # include <stdio.h>
 # include <string.h>
 # include <stdlib.h>
+# include <time.h>
 
 # include <dirent.h>
 # include <unistd.h>
@@ -45,6 +46,8 @@
 # include "directory_content.h"
 # include "log.h"
 
+/*排序方式：1为按名字排序，2为按修改时间排序，3为按大小排序*/
+si_t sort_flag=1;
 
 /**
  * qsort 的比较函数
@@ -54,12 +57,26 @@
 static si_t
 comp
 (void * a,
- void * z)
+ void * b)
 {
-    return
-    strcmp
-    (((struct directory_item *)(((struct vector_node *)a)->data))->name ,
-     ((struct directory_item *)(((struct vector_node *)z)->data))->name );
+    struct directory_item * file_a=(struct directory_item *)(((struct vector_node *)a)->data);
+    struct directory_item * file_b=(struct directory_item *)(((struct vector_node *)b)->data);
+    if(sort_flag==1)
+       return strcmp(file_a->name ,file_b->name );
+    else if(sort_flag==2)
+    {
+         if((file_a->is_directory!=1 && file_b->is_directory!=1)||(file_a->is_directory==1&&file_b->is_directory==1))
+           return (file_a->m_time > file_b->m_time ? 1 :-1);
+         else
+           return (file_a->is_directory==1 ? -1 :1);
+    }
+    else
+    {
+         if((file_a->is_directory!=1&& file_b->is_directory!=1)||(file_a->is_directory==1&&file_b->is_directory==1))
+           return (file_a->file_size > file_b->file_size? 1 :-1);
+         else
+           return (file_a->is_directory==1 ? -1 :1);
+    }
 }
 
 /**
@@ -73,6 +90,7 @@ quick_sort
 
     return 0;
 }
+
 
 si_t
 directory_content
@@ -133,7 +151,9 @@ directory_content
             di.name[1] = ' ';
             di.is_directory = 0;
         }
-
+         di.file_size=file_info.st_size;
+         di.a_time=file_info.st_atim.tv_sec;
+         di.m_time=file_info.st_mtim.tv_sec;
         vector_push_back(v, &di, sizeof(struct directory_item));
     }
 

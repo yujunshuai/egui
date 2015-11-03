@@ -31,7 +31,8 @@
 # define _DIRECTORY_CONTENT_ 1
 
 # include "data_structures.h"
-
+/*排序方式：1为按名字排序，2为按修改时间排序，3为按大小排序*/
+extern si_t sort_flag;
 si_t
 directory_content
 (char * path,
