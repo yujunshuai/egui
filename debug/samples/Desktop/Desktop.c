@@ -512,7 +512,7 @@ int main()
 		struct stat file_info;
 		FILE *fp;
 		dir_ptr = opendir(path);
-		int num=0;//默认的位置
+		int num=1;//默认的位置
 	
 		if(dir_ptr == NULL)
 		    return -1;

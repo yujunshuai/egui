@@ -56,6 +56,13 @@ si_t right_click_menu_rename(void * bt,void * msg);
 
 si_t right_click_menu_open(void * bt,void * msg);
 
+si_t right_click_menu_delete(void * bt,void * msg);
+
+si_t right_click_menu_coyp(void * bt, void * msg);
+
+si_t right_click_menu_paste(void * bt, void * msg);
+
+
 si_t right_click_menu_init();
 
 void right_click_menu_handle(union message* msg);
