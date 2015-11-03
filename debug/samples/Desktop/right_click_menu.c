@@ -55,19 +55,42 @@ int save_or_rename_flag=0;
 char save_file_name[100]={0};
 
 void create_new_folder(){ 
-    si_t i=0;
-    byte_t str[100]="/home/wang/egui/_build/MAIN/NEW FOLDER";
-    byte_t cpy[100]="/home/wang/egui/_build/MAIN/NEW FOLDER";
-    byte_t temp_str[100];
-    while(access(str,0)!=-1){//access函数是查看文件是不是存在
-    	strcpy(str,cpy);
-    	i++;
-    	sprintf(temp_str, "%d", i);
-    	strcat(str,temp_str);
-    }
-    if (mkdir(str,0777)) {//如果不存在就用mkdir函数来创建
-    	printf("creat folder failed!!!");
-    }
+	/* 申请快捷方式 */
+	struct shortcut* sh = shortcut_init(2);
+	/* 申请失败 */
+	if(sh == NULL)
+		application_exit();
+	sh->is_real=1;
+
+	vector_push_back(&sh_desktop_vector, sh, sizeof(struct shortcut));
+	
+	sh_new_ptr = vector_at(&sh_desktop_vector, app_number);
+	sh_new_ptr->is_real=1;
+	shortcut_set_is_text_visiable(sh_new_ptr,1);
+	shortcut_set_text(sh_new_ptr,"new");
+	shortcut_set_img_path(sh_new_ptr,"/home/wangfei/egui/resource/icons/file_icon/dir1_1.bmp");
+	shortcut_set_img_normal_path(sh_new_ptr,"/home/wangfei/egui/resource/icons/file_icon/dir1_1.bmp");
+	shortcut_set_img_select_path(sh_new_ptr,"/home/wangfei/egui/resource/icons/file_icon/dir1_2.bmp");
+	strcpy(sh_new_ptr->app_name, "file_browser");
+	strcpy(sh_new_ptr->app_path, "/home/wangfei/egui/_bulid/debug/samples/file_browser/");
+	strcpy(sh_new_ptr->link_file_path,"/home/wangfei/me");
+	sh_new_ptr->is_real=0;
+	sh_new_ptr->callback=shortcut_callback;
+	int num=1;
+	while(1){
+		struct point p;
+		p.x=num/area_num_y;
+		p.y=num%area_num_y;
+		num++;
+		if(reset_shortcut_bound(sh_new_ptr,p)==1)
+			break;
+	}
+	
+	app_number++;
+
+	object_attach_child(OBJECT_POINTER(Desktop_im), OBJECT_POINTER(sh_new_ptr));
+
+
 }
 
 void create_new_file(){
@@ -77,8 +100,6 @@ void create_new_file(){
 	if(sh == NULL)
 		application_exit();
 	sh->is_real=1;
-
-
 
 	vector_push_back(&sh_desktop_vector, sh, sizeof(struct shortcut));
 	
@@ -179,7 +200,8 @@ si_t rename_window_ok_button_callback(void* btn, void* msg)
 	{
     case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
 		sprintf(save_file_name, "%s", text_line_get_buf(save_text_line));
-		if(save_or_rename_flag==2){//重命名
+		//重命名
+		if(save_or_rename_flag==2){
 			if(sh_temp_ptr && sh_temp_ptr->is_real==0){
 				shortcut_set_text(sh_temp_ptr,save_file_name);
 				change_file_content(sh_temp_ptr->link_file_path,"NAME:",save_file_name);
@@ -192,13 +214,14 @@ si_t rename_window_ok_button_callback(void* btn, void* msg)
 					strcpy(new_name,desktop_path);
 					strcat(new_name,save_file_name);
 					//execl("/bin/mv","mv",sh_temp_ptr->link_file_path,new_name,NULL);
-					//chmod(new_name, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IWOTH|S_IXOTH);
+					chmod(new_name, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IWOTH|S_IXOTH);
 					rename(sh_temp_ptr->link_file_path,new_name);
 					strcpy(sh_temp_ptr->link_file_path,new_name);			
 				//}
 			}
 		}
-		else if(save_or_rename_flag==1){//新建文件
+		//新建文件
+		else if(save_or_rename_flag==1){
 			shortcut_set_text(sh_new_ptr,save_file_name);
 			char new_name[100]={0};
 			strcpy(new_name,desktop_path);
@@ -215,28 +238,25 @@ si_t rename_window_ok_button_callback(void* btn, void* msg)
 			strcpy(sh_new_ptr->link_file_path,new_name);	
 			sh_new_ptr->is_real=1;
 		}
-		/*
-		if((pid = fork()) == 0)
-        {
-            switch(save_or_rename_flag)
-            {
-                case 0:
-                    execl("/bin/touch","touch",save_file_name,NULL);
-                    break;
-                case 1:
-                    execl("/bin/mkdir","mkdir",save_file_name,NULL);
-                    break;
-                case 2:
-					execl("/bin/mv","mv",temp_path,save_file_name,NULL);
-                    break;
-                default:
-                    break;
-            }
-            exit(0);
-        }
-        usleep(100000);
-		*/
-		
+		//新建文件夹
+		else if(save_or_rename_flag==0){
+			shortcut_set_text(sh_new_ptr,save_file_name);
+			char new_name[100]={0};
+			strcpy(new_name,desktop_path);
+			strcat(new_name,save_file_name);
+			pid_t pid;
+			if((pid = fork()) == 0){
+
+				execl("/bin/mkdir","mkdir",new_name,NULL);
+				
+				//FILE *out=fopen(new_name,"w");  /*out是充当临时文件作用*/
+				//fclose(out);
+				chmod(new_name, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IWOTH|S_IXOTH);
+			}
+			strcpy(sh_new_ptr->link_file_path,new_name);	
+			sh_new_ptr->is_real=1;
+		}
+		//关闭窗口		
         application_del_window(save_window);
 		save_window = NULL;
 		save_text_line = NULL;
@@ -314,7 +334,11 @@ right_click_menu_NEW_FOLDER
     switch(message_get_type(msg))
     {
     	case MESSAGE_TYPE_MOUSE_PRESS:
-            //create_new_folder();
+			save_or_rename_flag=0;
+            create_new_folder();
+			pop_window();
+			desktop_flush();
+			right_click_menu_cancel();
     	    break;
 
         default:

@@ -8,6 +8,8 @@ _build/
 _build
 _build/*
 _bulid
+debug/samples/Desktop/shortcut/*
+debug/samples/Desktop/shortcut/
 !.gitignore
 !.ycm_extra_conf.py
 
