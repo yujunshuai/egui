@@ -10,7 +10,8 @@ noinst_PROGRAMS += %D%/multi_windows\
 				   %D%/text_clock\
 			   	   %D%/tab\
 		   		   %D%/game\
-				   %D%/image_view
+				   %D%/image_view\
+					%D%/timer_test
 
 
 %C%_multi_windows_SOURCES = %D%/multi_windows.c
@@ -24,7 +25,7 @@ noinst_PROGRAMS += %D%/multi_windows\
 %C%_tab_SOURCES = %D%/tab.c
 %C%_game_SOURCES = %D%/game.c
 %C%_image_view_SOURCES = %D%/image_view.c
-
+%C%_timer_test_SOURCES = %D%/timer_test.c
 
 
 %C%_multi_windows_LDADD = $(debug_samples_LDADD_TEMP)
@@ -38,6 +39,7 @@ noinst_PROGRAMS += %D%/multi_windows\
 %C%_tab_LDADD = $(debug_samples_LDADD_TEMP)
 %C%_game_LDADD = $(debug_samples_LDADD_TEMP)
 %C%_image_view_LDADD = $(debug_samples_LDADD_TEMP)
+%C%_timer_test_LDADD = $(debug_samples_LDADD_TEMP)
 
 
 

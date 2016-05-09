@@ -340,3 +340,7 @@ void button_set_font(struct button* b, si_t font)
 {
 	b->font = font;
 }
+
+void button_set_text(struct button* b, const char *text){
+	b->text = strdup(text);
+}

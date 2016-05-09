@@ -820,6 +820,9 @@ si_t application_exec()
 		queue_pop(&global_application.message_queue);
 	}
 
+	if(global_application.application_type==APPLICATION_TYPE_TIMER){
+		global_application.update_time_handler();
+	}
 	global_application.exec_flag = 1;
 	if(0 != event_listener_exec(&global_application.app_event_listener))
 	{

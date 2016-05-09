@@ -108,6 +108,9 @@ struct application
 	 * server uds path
 	 **/
 	char* server_path;
+
+
+	void (*update_time_handler)();
 };
 
 /**
@@ -171,5 +174,11 @@ extern si_t application_exec();
  **/
 extern void application_desktop_set(addr_t desktop_ptr, void (*desktop_handler)(addr_t, union message*));
 
+
+/**
+ *设置更新时间函数
+ *
+ **/
+extern void application_set_update_time(void (*update_time)());
 # endif
 

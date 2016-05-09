@@ -157,4 +157,9 @@ extern void button_set_color(struct button* b, struct color* fcolor, struct colo
  **/
 extern void button_set_font(struct button* b, si_t font);
 
+/**
+ *设置buton上的文字
+ *
+ **/
+extern void button_set_text(struct button* b,const char *text);
 # endif

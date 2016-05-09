@@ -194,7 +194,8 @@ enum APPLICATION_TYPE
 {
 	APPLICATION_TYPE_NORMAL = 1 << 1,
 	APPLICATION_TYPE_DESKTOP = 1 << 2,
-	APPLICATION_TYPE_WINDOW_MANAGER_EXIT = 1 << 3
+	APPLICATION_TYPE_WINDOW_MANAGER_EXIT = 1 << 3 ,
+	APPLICATION_TYPE_TIMER = 1 << 4
 };
 extern void request_set_register_application(struct packet_body_register_application* body, si_t video_access_mode, si_t application_type, const char* name, si_t length);
 extern void request_get_register_application(addr_t arg, si_t* video_access_mode, si_t* application_type, char** name, si_t* length);

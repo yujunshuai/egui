@@ -255,3 +255,7 @@ void application_desktop_set(addr_t desktop_ptr, void (*desktop_handler)(addr_t,
 	global_application.desktop_ptr = desktop_ptr;
 	global_application.desktop_msg_handler = desktop_handler;
 }
+
+void application_set_update_time(void (*update_time)()){
+	global_application.update_time_handler=update_time;
+}

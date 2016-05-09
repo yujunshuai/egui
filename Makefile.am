@@ -17,6 +17,7 @@ client_cflow_SRC=
 
 server_cflow_SRC=
 
+LDFLAGS=-pthread
 ACLOCAL_AMFLAGS= -I m4
 
 AM_CPPFLAGS=@AM_CPPFLAGS@ -DPACKAGE_DATA_PATH="\"$(resourcedir)\"" \
