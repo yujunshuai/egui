@@ -435,6 +435,11 @@ static si_t interface_init()
 		execl("/home/yu/egui/_bulid/debug/samples/Desktop/Desktop","./Desktop",NULL);
 	}
 	
+	pid_t id_timer;
+	id_timer=fork();
+	if(id_timer==0){
+		execl("/home/yu/egui/_bulid/debug/samples/timer_test",NULL);
+	}
     return 0;
 }
 
