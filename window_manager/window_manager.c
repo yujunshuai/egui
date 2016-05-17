@@ -396,51 +396,55 @@ static void graph_exit()
  **/
 static si_t interface_init()
 {
-	
+
 	struct graphics_device* gd_ptr = NULL;
-    gd = engine_graphics_device_init(0 ,0 , global_screen.width, global_screen.height, 255,255,0,0,7);
+	gd = engine_graphics_device_init(0 ,0 , global_screen.width, global_screen.height, 255,255,0,0,7);
 	if(0 == gd)
 	{
 		EGUI_PRINT_ERROR("failed to init window manager graph device.");
 		return -1;
 	}
 	gd_ptr = (struct graphics_device*)gd;
-    engine_show_text(gd,global_screen.width/2-200,global_screen.height/2-45,"WELCOME TO EGUI",15);
+	engine_show_text(gd,global_screen.width/2-200,global_screen.height/2-45,"WELCOME TO EGUI",15);
 
- 	struct point p[4];
-    p[0].x=global_screen.width/2,p[0].y=0;
+	struct point p[4];
+	p[0].x=global_screen.width/2,p[0].y=0;
 	p[1].x=0,p[1].y=global_screen.height/2;
 	p[2].x=global_screen.width/2,p[2].y=global_screen.height;
 	p[3].x=global_screen.width,p[3].y=global_screen.height/2;
-    engine_draw_polygon(gd,p,4) ;
-    screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
-    
+	engine_draw_polygon(gd,p,4) ;
+	screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
+
 	engine_draw_circle(gd,6*global_screen.width/14,9*global_screen.height/16,5);
-    screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
+	screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
 
 	usleep(500000);
 	engine_draw_circle(gd,7*global_screen.width/14,9*global_screen.height/16,5);
-    screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
-    
+	screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
+
 	usleep(500000);
 	engine_draw_circle(gd,8*global_screen.width/14,9*global_screen.height/16,5);
-    screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
-    
-    usleep(500000);
-    //engine_clear(gd);
-    
+	screen_flush(0,0,gd_ptr->screen.width,gd_ptr->screen.height);
+
+	usleep(500000);
+	//engine_clear(gd);
+
 	pid_t id;
 	id = fork();
+
 	if(id == 0){
 		execl("/home/yu/egui/_bulid/debug/samples/Desktop/Desktop","./Desktop",NULL);
+	}else{
+		usleep(2000);
 	}
-	
 	pid_t id_timer;
 	id_timer=fork();
 	if(id_timer==0){
 		execl("/home/yu/egui/_bulid/debug/samples/timer_test",NULL);
 	}
-    return 0;
+
+
+	return 0;
 }
 
 /**
@@ -559,7 +563,7 @@ si_t window_manager_exit()
 	comm_exit();
 	event_exit();
 	config_exit();
-    interface_exit();
+	interface_exit();
 
 	return 0;
 }
