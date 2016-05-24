@@ -435,7 +435,7 @@ static si_t interface_init()
 	if(id == 0){
 		execl("/home/yu/egui/_bulid/debug/samples/Desktop/Desktop","./Desktop",NULL);
 	}else{
-		usleep(2000);
+		sleep(2);
 	}
 	pid_t id_timer;
 	id_timer=fork();

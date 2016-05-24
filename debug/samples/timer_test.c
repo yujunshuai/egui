@@ -15,6 +15,7 @@
 
 static struct color light_green = {0xcc, 0xff, 0x99, 0};
 static struct color barely_blue = {0xcb, 0xf3, 0xfb, 0};
+static struct color ground_purple={0x5c,0x3d,0xaf,0};
 
 struct button *b = NULL;
 
@@ -39,12 +40,12 @@ void update_time_handler();
 //}
 
 void update_time_handler(){
-	EGUI_PRINT_INFO("button deal the single_click_msg\n");
+	//EGUI_PRINT_INFO("button deal the single_click_msg\n");
 	time_t rawtime;
 	struct tm * timeinfo;
 
 	while(1){			
-		EGUI_PRINT_INFO("UPDATE THE TIME\n");
+	//	EGUI_PRINT_INFO("UPDATE THE TIME\n");
 		time(&rawtime);
 		timeinfo = localtime(&rawtime);
 		button_set_text(b, asctime(timeinfo));
@@ -65,12 +66,12 @@ int main(){
 	si_t screen_h = get_screen_size_h();
 
 	w = window_init("time");
-	window_set_bounds(w,screen_w-200,screen_h-15,200,15);
-	window_set_color(w,NULL,&light_green);
+	window_set_bounds(w,screen_w-200,screen_h-30,200,30);
+	window_set_color(w,NULL,&ground_purple);
 
 	b = button_init("time");
-	button_set_bounds(b,0,0,200,15);
-	button_set_color(b,NULL,&barely_blue);
+	button_set_bounds(b,0,8,200,30);
+	button_set_color(b,NULL,&ground_purple);
 	button_set_text(b, "test text");
 //	b->callback = button_callback;
 

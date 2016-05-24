@@ -225,10 +225,13 @@ static si_t desktop_default_widget_repaint(struct window * w, union message * ms
     	show_text(w->gd, 15, 3+screen_h-30, w->title, strlen(w->title));
 		
 		for(int i=0;i<bar_num;i++){
+			struct window_info * win_info_ptr = (struct window_info *) vector_at(&(desktop.window_info_vector),i);
+			if(strcmp(win_info_ptr->title,"time")==0)
+				continue;
+			--i;
 			set_desktop_color(w,&bar_blue);
         	fill_rectangle(w->gd,(i+1)*80,1+screen_h-30,79,28);
 			
-			struct window_info * win_info_ptr = (struct window_info *) vector_at(&(desktop.window_info_vector),i);
 			set_desktop_color(w, &font_white);
 			int len=strlen(win_info_ptr->title);
 			if(len>=10){
@@ -257,7 +260,7 @@ static si_t desktop_default_widget_repaint(struct window * w, union message * ms
 				set_font(w->gd, FONT_MATRIX_10);
 				show_text(w->gd, (i+1)*80 + ((10-len)/2-1)*10, 3+screen_h-30, win_info_ptr->title, strlen(win_info_ptr->title));
 			}
-			
+			++i;
 		}
     return 0;
 }
@@ -277,10 +280,13 @@ extern void desktop_bar_repaint(struct window* w){
     show_text(w->gd, 15, 3+screen_h-30, w->title, strlen(w->title));
 		
 	for(int i=0;i<bar_num;i++){
+		struct window_info * win_info_ptr = (struct window_info *) vector_at(&(desktop.window_info_vector),i);
+			if(strcmp(win_info_ptr->title,"time")==0)
+				continue;
+			--i;
 		set_desktop_color(w,&bar_blue);
         fill_rectangle(w->gd,(i+1)*80,1+screen_h-30,79,28);
 		
-		struct window_info * win_info_ptr = (struct window_info *) vector_at(&(desktop.window_info_vector),i);
 		set_desktop_color(w, &font_white);
 		int len=strlen(win_info_ptr->title);
 		if(len>=10){
@@ -309,7 +315,7 @@ extern void desktop_bar_repaint(struct window* w){
 				show_text(w->gd, (i+1)*80 + ((10-len)/2-1)*10, 3+screen_h-30, win_info_ptr->title, strlen(win_info_ptr->title));
 			}
 		
-
+	++i;
 	}
 	desktop_default_widget_show(w, NULL);
 }

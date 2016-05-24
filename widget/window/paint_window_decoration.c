@@ -348,6 +348,10 @@ paint_window_close_button
 
 si_t paint_window_decoration(struct window * w)
 {
+	if(strcmp(w->title,"time")==0){
+		paint_window_time_frame(w);
+		return ;
+	}
     paint_window_frame(w);
     paint_window_menu_button(w);
     paint_window_title_bar(w);
@@ -358,3 +362,25 @@ si_t paint_window_decoration(struct window * w)
     return 0;
 }
 
+void paint_window_time_frame(struct window *w){
+//	EGUI_PRINT_INFO("paint_window_time_frame\n");
+	 si_t x, y, width, height;
+
+    x = w->area.x -3;
+    y = w->area.y-33;
+    width =203;
+		height =33;
+
+    set_area(w->gd, x, y, width, height);
+
+		struct color yellow={0xff,0xff,0x00,0};
+
+    set_window_color(w, &yellow);
+    fill_rectangle (w->gd, x , y , width , height );
+
+		struct color ground_purple={0x5c,0x3d,0xaf,0};
+		set_area(w->gd,w->area.x-3,w->area.y,3,30);
+		set_window_color(w,&ground_purple);
+		fill_rectangle(w->gd,w->area.x-3,w->area.y,3,30);
+
+}
