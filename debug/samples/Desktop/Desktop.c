@@ -25,7 +25,7 @@
  * 02110-1301, USA.
  *
  * All rights reserved.
-**/
+ **/
 
 # include <stdio.h>
 # include <sys/types.h>
@@ -45,7 +45,9 @@
 # include "desktop.h"
 # include "taskbar.h"
 # include "right_click_menu.h"
+#include"start_menu.h"
 
+#include "log.h"
 
 int app_number=0;
 struct image_view * Desktop_im = NULL;
@@ -110,18 +112,18 @@ int reset_shortcut_bound(struct shortcut* sh, struct point area_num){
 
 si_t diff_timeval(struct timeval * t1, struct timeval * t2, struct timeval * result)
 {
-    if(t1->tv_usec < t2->tv_usec)
-    {
-        result->tv_usec = t1->tv_usec + 1000000 - t2->tv_usec;
-        result->tv_sec = t1->tv_sec - 1 - t2->tv_sec;
-    }
-    else
-    {
-        result->tv_usec = t1->tv_usec - t2->tv_usec;
-        result->tv_sec = t1->tv_sec - t2->tv_sec;
-    }
+	if(t1->tv_usec < t2->tv_usec)
+	{
+		result->tv_usec = t1->tv_usec + 1000000 - t2->tv_usec;
+		result->tv_sec = t1->tv_sec - 1 - t2->tv_sec;
+	}
+	else
+	{
+		result->tv_usec = t1->tv_usec - t2->tv_usec;
+		result->tv_sec = t1->tv_sec - t2->tv_sec;
+	}
 
-    return 0;
+	return 0;
 }
 
 
@@ -136,14 +138,20 @@ si_t shortcut_act(struct shortcut* sh_ptr){
 	strcat(full_path,sh_ptr->app_name);
 	act[0]='.',act[1]='/';
 	strcat(act,sh_ptr->app_name);
+			FILE *fp;
+			fp=fopen("test.txt","a+");
+			fwrite("hello",strlen("hello"),1,fp);
+			fclose(fp);
 	if(id == 0){
-		if(strstr(sh_ptr->app_name,"image_view")!=NULL && sh_ptr->is_real==1)
+		if(strstr(sh_ptr->app_name,"image_view")!=NULL && sh_ptr->is_real==1){
 			execl(full_path,act,sh_ptr->link_file_path,NULL);
-		else if(strstr(sh_ptr->app_name,"editerbasic")!=NULL && sh_ptr->is_real==1)
+		}else if(strstr(sh_ptr->app_name,"editerbasic")!=NULL && sh_ptr->is_real==1){
+			EGUI_PRINT_INFO("%s,%s\n",act,sh_ptr->link_file_path);
 			execl(full_path,act,sh_ptr->link_file_path,NULL);
-		else if(strstr(sh_ptr->app_name,"file_browser")!=NULL && sh_ptr->is_real==1)
-			execl(full_path,act,sh_ptr->link_file_path,NULL);
-		else if(strstr(sh_ptr->app_name,"NULL")!=NULL && sh_ptr->is_real==1)
+		}else if(strstr(sh_ptr->app_name,"file_browser")!=NULL && sh_ptr->is_real==1){
+			EGUI_PRINT_INFO("%s,%s\n",act,sh_ptr->link_file_path);
+			execl(full_path,NULL);
+		}else if(strstr(sh_ptr->app_name,"NULL")!=NULL && sh_ptr->is_real==1)
 			;
 		else
 			execl(full_path,act,NULL);
@@ -153,63 +161,87 @@ si_t shortcut_act(struct shortcut* sh_ptr){
 
 int change_file(char* file,char* src,char* des){
 	char file2[]="/home/yu/egui/debug/samples/Desktop/shortcut/temp11";
-    FILE *in=fopen(file,"r");
-    FILE *out=fopen(file2,"w");  /*out是充当临时文件作用*/
-    char buffer[1024];
+	FILE *in=fopen(file,"r");
+	FILE *out=fopen(file2,"w");  /*out是充当临时文件作用*/
+	char buffer[1024];
 	memset(buffer , 0, sizeof(char)*1024);
-    if(!in)
-    {
-        printf("cann't open file\n");
-        exit(1);
-    }
-    if(!out)
-    {
-        printf("cann't create file\n");
-        exit(1);
-    }
-        /*开始复制*/
-    while(fgets(buffer,1024,in))
-    {
-       //if(ch=='a') ch='p';
-	   char* ptr = strstr(buffer,src);
-	   if(ptr!=NULL){
+	if(!in)
+	{
+		printf("cann't open file\n");
+		exit(1);
+	}
+	if(!out)
+	{
+		printf("cann't create file\n");
+		exit(1);
+	}
+	/*开始复制*/
+	while(fgets(buffer,1024,in))
+	{
+		//if(ch=='a') ch='p';
+		char* ptr = strstr(buffer,src);
+		if(ptr!=NULL){
 			strcpy(buffer,src);
 			strcat(buffer,des);
 			strcat(buffer,"\n");
-	   }
-       fputs(buffer,out);
-	   memset(buffer , 0, sizeof(char)*1024);
-    }
-    fclose(in);  
+		}
+		fputs(buffer,out);
+		memset(buffer , 0, sizeof(char)*1024);
+	}
+	fclose(in);  
 	fclose(out);  
-    unlink(file); /*删除test.txt*/
+	unlink(file); /*删除test.txt*/
 	chmod(file2, S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IWOTH|S_IXOTH);
-    rename(file2,file); /*改名*/
+	rename(file2,file); /*改名*/
 	return 0;
 }
 
 si_t shortcut_callback(void * sh, void * msg)
 {
+
 	struct shortcut * sh_ptr=sh;
 	union message * m = msg;
 	switch(m->base.type)
 	{
 		case MESSAGE_TYPE_MOUSE_PRESS:
-			sh_ptr->last_do_time=m->base.time;			  
+			sh_ptr->last_do_time=m->base.time;			
 			break;
 
 		case MESSAGE_TYPE_MOUSE_RELEASE:
-		{
-			sh_ptr->last_do_time.tv_sec=0;	
-			sh_ptr->last_do_time.tv_usec=0;
-			 
-		}
+			{
+				sh_ptr->last_do_time.tv_sec=0;	
+				sh_ptr->last_do_time.tv_usec=0;
+			}
 			break;
 		case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
-		{
-			//左键点击
-			if(m->mouse.code == INPUT_CODE_MOUSE_L_KEY){
-				if(sh_ptr->flag==0){
+			{
+				//左键点击
+				if(m->mouse.code == INPUT_CODE_MOUSE_L_KEY){
+					if(sh_ptr->flag==0){
+						for(int i=0;i<app_number;i++){
+							struct shortcut* sh = vector_at(&sh_desktop_vector, i);
+							shortcut_set_img_path(sh, sh->img_normal_path);
+							sh->flag=0;
+						}
+						shortcut_set_img_path(sh_ptr, sh_ptr->img_select_path);
+						sh_ptr->flag=1;
+					}
+					else{
+						shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
+						sh_ptr->flag=0;
+					}
+
+					sh_ptr->last_do_time.tv_sec=0;	
+					sh_ptr->last_do_time.tv_usec=0;
+					// 重绘所有桌面快捷方式
+					for(int i=0;i<app_number;i++){
+						struct shortcut* sh = vector_at(&sh_desktop_vector, i);
+						shortcut_repaint(sh);
+						shortcut_show(sh);
+					}
+				}
+				//右键单击
+				else if(m->mouse.code == INPUT_CODE_MOUSE_R_KEY){
 					for(int i=0;i<app_number;i++){
 						struct shortcut* sh = vector_at(&sh_desktop_vector, i);
 						shortcut_set_img_path(sh, sh->img_normal_path);
@@ -217,50 +249,26 @@ si_t shortcut_callback(void * sh, void * msg)
 					}
 					shortcut_set_img_path(sh_ptr, sh_ptr->img_select_path);
 					sh_ptr->flag=1;
-				}
-				else{
-					shortcut_set_img_path(sh_ptr, sh_ptr->img_normal_path);
-					sh_ptr->flag=0;
-				}
+					sh_ptr->last_do_time.tv_sec=0;	
+					sh_ptr->last_do_time.tv_usec=0;
+					// 重绘所有桌面快捷方式
+					for(int i=0;i<app_number;i++){
+						struct shortcut* sh = vector_at(&sh_desktop_vector, i);
+						shortcut_repaint(sh);
+						shortcut_show(sh);
+					}
 
-				sh_ptr->last_do_time.tv_sec=0;	
-				sh_ptr->last_do_time.tv_usec=0;
-				// 重绘所有桌面快捷方式
-				for(int i=0;i<app_number;i++){
-					struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-			  		shortcut_repaint(sh);
-			  		shortcut_show(sh);
+					//right_click_menu_cancel();
+					right_click_menu_handle(msg);
 				}
 			}
-			//右键单击
-			else if(m->mouse.code == INPUT_CODE_MOUSE_R_KEY){
-
-				for(int i=0;i<app_number;i++){
-					struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-					shortcut_set_img_path(sh, sh->img_normal_path);
-					sh->flag=0;
-				}
-				shortcut_set_img_path(sh_ptr, sh_ptr->img_select_path);
-				sh_ptr->flag=1;
-				sh_ptr->last_do_time.tv_sec=0;	
-				sh_ptr->last_do_time.tv_usec=0;
-				// 重绘所有桌面快捷方式
-				for(int i=0;i<app_number;i++){
-					struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-			  		shortcut_repaint(sh);
-			  		shortcut_show(sh);
-				}
-
-				//right_click_menu_cancel();
-				right_click_menu_handle(m);
-			}
-		}
 			break;
-	
+
 		case MESSAGE_TYPE_MOUSE_DOUBLE_CLICK:
 			shortcut_act(sh_ptr);
 			break;
 		default:
+
 			shortcut_default_callback(sh,msg);
 			break;
 	}
@@ -280,7 +288,7 @@ void desktop_handler(addr_t arg, union message* msg)
 		desktop_info_init(desktop_info_ptr);
 		flag = 1;
 	}
-		
+
 	switch(message_get_type(msg))
 	{
 		//当敲击回车时，若有快捷方式被选中，则启动程序
@@ -304,12 +312,12 @@ void desktop_handler(addr_t arg, union message* msg)
 					shortcut_act(sh_desktop_ptr);
 				}
 			}
-		break;
+			break;
 
 
-		/* 处理桌面图标拖动的情况 */
+			/* 处理桌面图标拖动的情况 */
 		case MESSAGE_TYPE_MOUSE_RELEASE:
-		 {	
+			{	
 				struct shortcut* sh_desktop_ptr = NULL;
 				int find_num=0;  //查找正在作用的桌面图标
 				for(find_num=0; find_num < app_number; find_num++){
@@ -327,10 +335,10 @@ void desktop_handler(addr_t arg, union message* msg)
 					}
 					else{
 						//设置新位置
-			  			struct point new_point = msg->base.cursor_position;
+						struct point new_point = msg->base.cursor_position;
 						struct point area_num;
 						if( find_witch_area(new_point, &area_num) == 1){
-							
+
 							reset_shortcut_bound(sh_desktop_ptr, area_num);
 							char new_position[3];
 							int xx=(int)area_num.x,yy=(int)area_num.y;
@@ -339,131 +347,146 @@ void desktop_handler(addr_t arg, union message* msg)
 								change_file(sh_desktop_ptr->link_file_path,"POSITION:",new_position);
 							}
 						}
-			  			/* 桌面刷新重绘 */
-			  			image_view_reshow(Desktop_im);
-  			  			/* 所有图标重绘 */				
-			  			for(int i=0;i<app_number;i++){
+						/* 桌面刷新重绘 */
+						image_view_reshow(Desktop_im);
+						/* 所有图标重绘 */				
+						for(int i=0;i<app_number;i++){
 							struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-			  				shortcut_repaint(sh);
-			  				shortcut_show(sh);
-			  			}
+							shortcut_repaint(sh);
+							shortcut_show(sh);
+						}
 						sh_desktop_ptr->last_do_time.tv_sec=0;	
 						sh_desktop_ptr->last_do_time.tv_usec=0;
 					}
 				}
 				/*右键菜单取消*/
 				right_click_menu_cancel();		  
-		 }
-		break;
-		/* 任务栏的激活处理 */
+				//start_menu_handle(msg);	
+				//	start_menu_cancel();
+			}
+			break;
+			/* 任务栏的激活处理 */
 		case MESSAGE_TYPE_MOUSE_SINGLE_CLICK:
-		{
-			//左键单击
-			if(msg->mouse.code == INPUT_CODE_MOUSE_L_KEY){
-				struct point* point_ptr=message_get_cursor_position(msg);
-				si_t x=point_ptr->x, y=point_ptr->y;
-				if(x>80 && x<(bar_num +1)*80 && y<screen_h && y>screen_h-30){
-					int i=(x-80)/80;
-					struct window_info * win_info_ptr = (struct window_info *) vector_at(&(desktop_info_ptr->window_info_vector),i);
-					activate_window(win_info_ptr->window_descripter);
-				} 
+			{
+				start_menu_handle(msg);
+				//左键单击
+				if(msg->mouse.code == INPUT_CODE_MOUSE_L_KEY){
+					struct point* point_ptr=message_get_cursor_position(msg);
+					if(msg->base.cursor_position.y>screen_h-30&&msg->base.cursor_position.x<100){
+						//	start_menu_handle(msg);
 
-
-				struct point new_point = msg->base.cursor_position;
-				struct point area_num;
-				//当前区域无快捷方式
-				if( find_witch_area(new_point, &area_num) == 1){
-					struct shortcut* sh_desktop_ptr = NULL;
-					int find_num=0;  //查找正在作用的桌面图标
-					for(find_num=0; find_num < app_number; find_num++){
-						sh_desktop_ptr = vector_at(&sh_desktop_vector, find_num);
-						if(sh_desktop_ptr->flag==1)
-							break;
 					}
-					if(find_num < app_number){
-						// 重绘所有桌面快捷方式
-						for(int i=0;i<app_number;i++){
-							struct shortcut* sh = vector_at(&sh_desktop_vector, i);
-							sh->flag=0;
-							shortcut_set_img_path(sh, sh->img_normal_path);
-					  		shortcut_repaint(sh);
-					  		shortcut_show(sh);
+
+					//左键单击
+					si_t x=point_ptr->x, y=point_ptr->y;
+					if(x>80 && x<(bar_num +1)*80 && y<screen_h && y>screen_h-30){
+						int i=(x-80)/80;
+						struct window_info * win_info_ptr = (struct window_info *) vector_at(&(desktop_info_ptr->window_info_vector),i);
+						activate_window(win_info_ptr->window_descripter);
+					} 
+
+
+					struct point new_point = msg->base.cursor_position;
+					struct point area_num;
+					//当前区域无快捷方式
+					if( find_witch_area(new_point, &area_num) == 1){
+						struct shortcut* sh_desktop_ptr = NULL;
+						int find_num=0;  //查找正在作用的桌面图标
+						for(find_num=0; find_num < app_number; find_num++){
+							sh_desktop_ptr = vector_at(&sh_desktop_vector, find_num);
+							if(sh_desktop_ptr->flag==1)
+								break;
+						}
+						if(find_num < app_number){
+							// 重绘所有桌面快捷方式
+							for(int i=0;i<app_number;i++){
+								struct shortcut* sh = vector_at(&sh_desktop_vector, i);
+								sh->flag=0;
+								shortcut_set_img_path(sh, sh->img_normal_path);
+								shortcut_repaint(sh);
+								shortcut_show(sh);
+							}
 						}
 					}
 				}
-			}
-			//中建单击
-			else if(msg->mouse.code == INPUT_CODE_MOUSE_M_KEY){
-				/*右键菜单取消*/
-				right_click_menu_cancel();
-			}
-			//右键单击
-			else if(msg->mouse.code == INPUT_CODE_MOUSE_R_KEY){
-				struct point p = msg->base.cursor_position;
-				if(is_area_being(p)==0)
-					right_click_menu_handle(msg);
-			}
 
-		}
-		break;
+				//中建单击
+				else if(msg->mouse.code == INPUT_CODE_MOUSE_M_KEY){
 
-		/* 有程序启动时记录并添加到任务栏 */
+					/*右键菜单取消*/
+					right_click_menu_cancel();
+				}
+				//右键单击
+				else if(msg->mouse.code == INPUT_CODE_MOUSE_R_KEY){
+					struct point p = msg->base.cursor_position;
+					if(is_area_being(p)==0){
+						if(msg->base.cursor_position.y<screen_h-30){
+							right_click_menu_handle(msg);
+						}else if(msg->base.cursor_position.x<100){
+							start_menu_handle(msg);
+						}
+					}
+				}				
+			}
+			break;
+
+			/* 有程序启动时记录并添加到任务栏 */
 		case MESSAGE_TYPE_WINDOW_REGISTER:
-		{
-			bar_num++;
-			
-			struct window_info * win_info_ptr = (struct window_info *)malloc(sizeof(struct window_info));
-			char *title= (char*)malloc(20);
-			
-			strcpy(title,(msg->window_register).title);
-			window_info_init(win_info_ptr, title, window_descripter);
-			vector_push_back(desktop_info_ptr, win_info_ptr, sizeof(struct window_info));	
-			desktop_bar_repaint(global_application.main_window);			
-    	}
-		break;
+			{
+				bar_num++;
 
-		/* 程序推出时从记录中删除并在任务栏关闭 */	
+				struct window_info * win_info_ptr = (struct window_info *)malloc(sizeof(struct window_info));
+				char *title= (char*)malloc(20);
+
+				strcpy(title,(msg->window_register).title);
+				window_info_init(win_info_ptr, title, window_descripter);
+				vector_push_back(desktop_info_ptr, win_info_ptr, sizeof(struct window_info));	
+				desktop_bar_repaint(global_application.main_window);			
+			}
+			break;
+
+			/* 程序推出时从记录中删除并在任务栏关闭 */	
 		case MESSAGE_TYPE_APP_WINDOW_CANCEL:
-		{
-			bar_num--;
-			int i = desktop_info_find_window_num(desktop_info_ptr, window_descripter);
-			vector_erase(&(desktop_info_ptr->window_info_vector),i);
-			desktop_bar_repaint(global_application.main_window);
-		}
-		break;
+			{
+				bar_num--;
+				int i = desktop_info_find_window_num(desktop_info_ptr, window_descripter);
+				vector_erase(&(desktop_info_ptr->window_info_vector),i);
+				desktop_bar_repaint(global_application.main_window);
+			}
+			break;
 
 
 	}
-	
+
 }
 
 
 
 
 /*
-    桌面主程序入口
-*/
+	 桌面主程序入口
+	 */
 int main()
 {
-    si_t video_access_mode = VIDEO_ACCESS_MODE_BUFFER;
+	si_t video_access_mode = VIDEO_ACCESS_MODE_BUFFER;
 	si_t app_type = APPLICATION_TYPE_DESKTOP;
-	
+
 	int i=0;
 
-    /* 初始化桌面程序 */
-    application_init(video_access_mode, app_type, "desktop");
-    application_desktop_set(&desktop, desktop_handler);
-    /* 申请桌面主窗口 */
-    Desktop_w = desktop_init("EGUI");
-    /* 申请失败 */
-    if(Desktop_w == NULL)
-    {
-        application_exit(); 
-        return -1;
-    }
+	/* 初始化桌面程序 */
+	application_init(video_access_mode, app_type, "desktop");
+	application_desktop_set(&desktop, desktop_handler);
+	/* 申请桌面主窗口 */
+	Desktop_w = desktop_init("EGUI");
+	/* 申请失败 */
+	if(Desktop_w == NULL)
+	{
+		application_exit(); 
+		return -1;
+	}
 	/* 根据用户屏幕配置桌面大小 */
-    screen_w = get_screen_size_w();
-    screen_h = get_screen_size_h();
+	screen_w = get_screen_size_w();
+	screen_h = get_screen_size_h();
 	desktop_set_bounds(Desktop_w, 0, 0, screen_w, screen_h);
 	desktop_set_color(Desktop_w, NULL, &xue_blue);
 
@@ -482,17 +505,17 @@ int main()
 			area_pptr[j][k].width=80;
 			area_pptr[j][k].height=80;
 			flag_pptr[j][k]=0;
-	}
+		}
 
 
 
 	/* 画背景图片 */
-    Desktop_im = image_view_init("/home/yu/egui/resource/icons/desktop/desktop11.bmp");
-    if(Desktop_im == NULL)
-    {
-        application_exit();
-        return -1;
-    }
+	Desktop_im = image_view_init("/home/yu/egui/resource/icons/desktop/desktop11.bmp");
+	if(Desktop_im == NULL)
+	{
+		application_exit();
+		return -1;
+	}
 	image_view_set_bounds(Desktop_im, 0, 0, screen_w ,screen_h-30);
 
 
@@ -513,34 +536,34 @@ int main()
 		FILE *fp;
 		dir_ptr = opendir(path);
 		int num=1;//默认的位置
-	
-		if(dir_ptr == NULL)
-		    return -1;
 
-	//////////////////////////////////////////////////////
+		if(dir_ptr == NULL)
+			return -1;
+
+		//////////////////////////////////////////////////////
 		while((dirent_ptr = readdir(dir_ptr)) != 0)
 		{
-		    
-		    //if(strlen(dirent_ptr->d_name) >2 && (strstr(dirent_ptr->d_name,"shortcut")!=NULL)){
+
+			//if(strlen(dirent_ptr->d_name) >2 && (strstr(dirent_ptr->d_name,"shortcut")!=NULL)){
 			if(strlen(dirent_ptr->d_name) >0 && strcmp(dirent_ptr->d_name,".")!=0 && strcmp(dirent_ptr->d_name,"..")!=0){
-		        strcpy(full_path,path);
-		        strcat(full_path,dirent_ptr->d_name);
+				strcpy(full_path,path);
+				strcat(full_path,dirent_ptr->d_name);
 				lstat(full_path, &file_info);
-		        if((fp=fopen(full_path,"r"))==NULL)
-		        {
-		            //return -1;
-		        }
+				if((fp=fopen(full_path,"r"))==NULL)
+				{
+					//return -1;
+				}
 				/* 申请快捷方式 */
 				struct shortcut* sh_desktop_ptr = shortcut_init(2);
 				/* 申请失败 */
 				if(sh_desktop_ptr == NULL)
 				{
-		    		application_exit();
-		    		//return -1;
+					application_exit();
+					//return -1;
 				}
-			
 
-				
+
+
 				shortcut_set_is_text_visiable(sh_desktop_ptr ,1);
 				vector_push_back(&sh_desktop_vector, sh_desktop_ptr, sizeof(struct shortcut));
 				struct shortcut* sh= vector_at(&sh_desktop_vector, app_number);
@@ -550,7 +573,7 @@ int main()
 				//当前文件是快捷方式文件，直接读取其中信息
 				if(strstr(dirent_ptr->d_name,".shortcut")!=NULL){
 
-		        	while(fgets(content,1024,fp)){
+					while(fgets(content,1024,fp)){
 						content[strlen(content)-1]=0;
 						if(count==0)	//(NAME:,实际内容在第5位)
 							shortcut_set_text(sh,content+5);
@@ -568,7 +591,7 @@ int main()
 						else if(count==5){
 							//若没有指定位置，则默认初始化位置(POSITION:XX,实际位置在第9,10位)
 							if(content[9]=='0' && content[10]=='0'){
-							//直到将该快捷方式分配好位置为止
+								//直到将该快捷方式分配好位置为止
 								struct point p;
 								while(1){
 									p.x=num/area_num_y;
@@ -600,7 +623,7 @@ int main()
 						sh->is_real=0;
 						memset(content , 0, sizeof(char)*1024);
 						count++;
-		        	}
+					}
 				}
 				//当前文件是真实的图片
 				else if(strstr(dirent_ptr->d_name,".bmp")!=NULL){
@@ -609,7 +632,7 @@ int main()
 					shortcut_set_img_normal_path(sh,"/home/yu/egui/resource/icons/file_icon/bmp_1.bmp");
 					shortcut_set_img_select_path(sh,"/home/yu/egui/resource/icons/file_icon/bmp_2.bmp");
 					strcpy(sh->app_name, "image_view");
-				    strcpy(sh->app_path, "/home/yu/egui/_bulid/debug/samples/");				
+					strcpy(sh->app_path, "/home/yu/egui/_bulid/debug/samples/");				
 					//直到将该快捷方式分配好位置为止
 					while(1){
 						struct point p;
@@ -629,7 +652,7 @@ int main()
 					shortcut_set_img_normal_path(sh,"/home/yu/egui/resource/icons/file_icon2/txt_1.bmp");
 					shortcut_set_img_select_path(sh,"/home/yu/egui/resource/icons/file_icon2/txt_2.bmp");
 					strcpy(sh->app_name, "editerbasic");
-				    strcpy(sh->app_path, "/home/yu/egui/_bulid/debug/samples/");				
+					strcpy(sh->app_path, "/home/yu/egui/_bulid/debug/samples/");				
 					//直到将该快捷方式分配好位置为止
 					while(1){
 						struct point p;
@@ -649,7 +672,7 @@ int main()
 					shortcut_set_img_normal_path(sh,"/home/yu/egui/resource/icons/file_icon/dir1_1.bmp");
 					shortcut_set_img_select_path(sh,"/home/yu/egui/resource/icons/file_icon/dir1_2.bmp");
 					strcpy(sh->app_name, "file_browser");
-				    strcpy(sh->app_path, "/home/yu/egui/_bulid/debug/samples/file_browser/");				
+					strcpy(sh->app_path, "/home/yu/egui/_bulid/debug/samples/file_browser/");				
 					//直到将该快捷方式分配好位置为止
 					while(1){
 						struct point p;
@@ -669,7 +692,7 @@ int main()
 					shortcut_set_img_normal_path(sh,"/home/yu/egui/resource/icons/file_icon2/ex_1.bmp");
 					shortcut_set_img_select_path(sh,"/home/yu/egui/resource/icons/file_icon2/ex_2.bmp");
 					strcpy(sh->app_name, "NULL");
-				    strcpy(sh->app_path, "NULL");				
+					strcpy(sh->app_path, "NULL");				
 					//直到将该快捷方式分配好位置为止
 					while(1){
 						struct point p;
@@ -686,36 +709,37 @@ int main()
 				sh->callback = shortcut_callback;			
 				app_number++;
 				fclose(fp);
-		    }
+			}
 		}
 		closedir(dir_ptr);
+		}
+
+
+
+
+
+
+
+
+		/* 背景图片添加到窗口 */
+		object_attach_child(OBJECT_POINTER(Desktop_w), OBJECT_POINTER(Desktop_im));   
+		/* 将shortcut添加到窗口 */
+		for(i=0;i<app_number;i++){
+			sh_desktop_ptr = vector_at(&sh_desktop_vector, i);
+			object_attach_child(OBJECT_POINTER(Desktop_im), OBJECT_POINTER(sh_desktop_ptr));
+		}
+
+
+		/* 右键菜单初始化 */
+		right_click_menu_init();
+		start_menu_init();
+
+		/* 添加顶层窗口 */
+		application_add_window(NULL, Desktop_w);
+		/* 设置主窗口 */
+		application_set_main_window(Desktop_w);
+		/* 运行 */
+		application_exec();
+
+		return 0;
 	}
-
-
-
-
-
-
-	
-
-    /* 背景图片添加到窗口 */
-    object_attach_child(OBJECT_POINTER(Desktop_w), OBJECT_POINTER(Desktop_im));   
-    /* 将shortcut添加到窗口 */
-    for(i=0;i<app_number;i++){
-		sh_desktop_ptr = vector_at(&sh_desktop_vector, i);
-    	object_attach_child(OBJECT_POINTER(Desktop_im), OBJECT_POINTER(sh_desktop_ptr));
-	}
-   
-
-     /* 右键菜单初始化 */
-     right_click_menu_init();
-
-    /* 添加顶层窗口 */
-    application_add_window(NULL, Desktop_w);
-    /* 设置主窗口 */
-    application_set_main_window(Desktop_w);
-    /* 运行 */
-    application_exec();
-
-    return 0;
-}

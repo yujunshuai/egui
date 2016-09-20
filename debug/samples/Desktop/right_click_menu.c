@@ -49,7 +49,7 @@ struct shortcut* sh_temp_ptr = NULL;
 struct shortcut* sh_new_ptr = NULL;
 struct shortcut* sh_copy_ptr = NULL;
 /*桌面应用图标数(app_number)*/
-char desktop_path[]="/home/wangfei/egui/debug/samples/Desktop/shortcut/";
+char desktop_path[]="/home/yu/egui/debug/samples/Desktop/shortcut/";
 char temp_path[100]={0};
 
 struct window* save_window = NULL;
@@ -72,12 +72,12 @@ void create_new_folder(){
 	sh_new_ptr->is_real=1;
 	shortcut_set_is_text_visiable(sh_new_ptr,1);
 	shortcut_set_text(sh_new_ptr,"new");
-	shortcut_set_img_path(sh_new_ptr,"/home/wangfei/egui/resource/icons/file_icon/dir1_1.bmp");
-	shortcut_set_img_normal_path(sh_new_ptr,"/home/wangfei/egui/resource/icons/file_icon/dir1_1.bmp");
-	shortcut_set_img_select_path(sh_new_ptr,"/home/wangfei/egui/resource/icons/file_icon/dir1_2.bmp");
+	shortcut_set_img_path(sh_new_ptr,"/home/yu/egui/resource/icons/file_icon/dir1_1.bmp");
+	shortcut_set_img_normal_path(sh_new_ptr,"/home/yu/egui/resource/icons/file_icon/dir1_1.bmp");
+	shortcut_set_img_select_path(sh_new_ptr,"/home/yu/egui/resource/icons/file_icon/dir1_2.bmp");
 	strcpy(sh_new_ptr->app_name, "file_browser");
-	strcpy(sh_new_ptr->app_path, "/home/wangfei/egui/_bulid/debug/samples/file_browser/");
-	strcpy(sh_new_ptr->link_file_path,"/home/wangfei/me");
+	strcpy(sh_new_ptr->app_path, "/home/yu/egui/_bulid/debug/samples/file_browser/");
+	strcpy(sh_new_ptr->link_file_path,"/home/yu/me");
 	sh_new_ptr->is_real=0;
 	sh_new_ptr->callback=shortcut_callback;
 	int num=1;
@@ -111,12 +111,12 @@ void create_new_file(){
 	sh_new_ptr->is_real=1;
 	shortcut_set_is_text_visiable(sh_new_ptr,1);
 	shortcut_set_text(sh_new_ptr,"new");
-	shortcut_set_img_path(sh_new_ptr,"/home/wangfei/egui/resource/icons/file_icon2/txt_1.bmp");
-	shortcut_set_img_normal_path(sh_new_ptr,"/home/wangfei/egui/resource/icons/file_icon2/txt_1.bmp");
-	shortcut_set_img_select_path(sh_new_ptr,"/home/wangfei/egui/resource/icons/file_icon2/txt_2.bmp");
+	shortcut_set_img_path(sh_new_ptr,"/home/yu/egui/resource/icons/file_icon2/txt_1.bmp");
+	shortcut_set_img_normal_path(sh_new_ptr,"/home/yu/egui/resource/icons/file_icon2/txt_1.bmp");
+	shortcut_set_img_select_path(sh_new_ptr,"/home/yu/egui/resource/icons/file_icon2/txt_2.bmp");
 	strcpy(sh_new_ptr->app_name, "editerbasic");
-	strcpy(sh_new_ptr->app_path, "/home/wangfei/egui/_bulid/debug/samples/");
-	strcpy(sh_new_ptr->link_file_path,"/home/wangfei/me");
+	strcpy(sh_new_ptr->app_path, "/home/yu/egui/_bulid/debug/samples/");
+	strcpy(sh_new_ptr->link_file_path,"/home/yu/me");
 	sh_new_ptr->is_real=0;
 	sh_new_ptr->callback=shortcut_callback;
 	int num=1;
@@ -815,6 +815,7 @@ si_t right_click_menu_init() {
 void right_click_menu_handle(union message* msg) {
 	sh_temp_ptr = NULL;
 	find_running_shortcut();
+	//点击位置没有快捷方式存在
 	if(sh_temp_ptr==NULL || is_area_having(msg->base.cursor_position)==0)
 		sh_temp_ptr = NULL;
 	si_t i=0;
