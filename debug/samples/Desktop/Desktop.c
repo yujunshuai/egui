@@ -138,10 +138,6 @@ si_t shortcut_act(struct shortcut* sh_ptr){
 	strcat(full_path,sh_ptr->app_name);
 	act[0]='.',act[1]='/';
 	strcat(act,sh_ptr->app_name);
-			FILE *fp;
-			fp=fopen("test.txt","a+");
-			fwrite("hello",strlen("hello"),1,fp);
-			fclose(fp);
 	if(id == 0){
 		if(strstr(sh_ptr->app_name,"image_view")!=NULL && sh_ptr->is_real==1){
 			execl(full_path,act,sh_ptr->link_file_path,NULL);
