@@ -251,6 +251,35 @@ static si_t window_default_widget_repaint(struct window * w, union message * msg
 
 static si_t window_default_widget_move(struct window * w, union message * msg)
 {
+	si_t screen_h = get_screen_size_h();
+	si_t screen_w = get_screen_size_w();
+	EGUI_PRINT_INFO("%d,%d\n", msg->base.cursor_position.x,msg->base.cursor_position.y);
+	if(msg->base.cursor_position.x==1365){
+		w->area.x = screen_w/2;
+    w->area.y = 30;
+    w->area.width = screen_w/2;
+    w->area.height = screen_h-60;
+		resize_window
+    (w->descriptor,
+     w->area.x,
+     w->area.y,
+     w->area.width,
+     w->area.height);
+		return 0;
+	}
+	if(msg->widget_move.position.x==3){
+		w->area.x = 3;
+    w->area.y = 30;
+    w->area.width = screen_w/2;
+    w->area.height = screen_h-60;
+		resize_window
+    (w->descriptor,
+     w->area.x,
+     w->area.y,
+     w->area.width,
+     w->area.height);
+		return 0;
+	}
     /* 更新位置 */
     w->area.x = msg->widget_move.position.x;
     w->area.y = msg->widget_move.position.y;
